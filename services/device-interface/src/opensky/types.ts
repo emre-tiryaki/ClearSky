@@ -1,5 +1,5 @@
 // Fetching option type: these options are for specifying the fetching request
-export interface FetchStateOptions {
+export interface FetchStatesOptions {
     //The time in Unix time stamp to retrieve states for. Current time will be used if omitted.
     time?: number;
 
