@@ -25,6 +25,6 @@ export class FlightPublisher {
 
     // Builds the AMQP routing key used to route a flight position message.
     buildingRoutingKey(icao24: string): string {
-        throw new Error("Method not implemented.");
+        return `flight.position.${icao24}`;
     }
 }
