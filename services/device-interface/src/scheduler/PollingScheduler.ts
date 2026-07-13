@@ -35,5 +35,11 @@ export class PollingScheduler {
         } catch(error) {
             console.log("PollingScheduler: cycle is failed", error)
         }
+
+        if (!this.isRunning) return;
+
+        this.timer = setTimeout(() => {
+            void this.tick();
+        }, this.intervalMs);
     }
 }
