@@ -11,7 +11,7 @@ export class AmqpConsumerManager {
         private readonly exchangeName: string,
         private readonly exchangeType: 'topic',
         private readonly queueName: string,
-        private readonly routintPattern: string,
+        private readonly routingPattern: string,
         private readonly prefetchCount: number,
     ) { }
 
@@ -22,7 +22,7 @@ export class AmqpConsumerManager {
 
         await this.assertExchange();
         await this.assertQueue();
-        await this.bindQueue(this.routintPattern);
+        await this.bindQueue(this.routingPattern);
     }
 
     async consume(handler: MessageHandler): Promise<void> {
