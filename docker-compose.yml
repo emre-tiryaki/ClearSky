@@ -31,5 +31,20 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: clearsky-api-gateway
+    env_file:
+      - ./.env
+      - ./services/api-gateway/.env
+    ports:
+      - "${API_GATEWAY_PORT}:4000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   rabbitmq_data:
