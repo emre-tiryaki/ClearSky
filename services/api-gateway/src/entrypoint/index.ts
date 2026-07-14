@@ -15,6 +15,7 @@ async function main(): Promise<void> {
 		schema: typeDefs,
 		resolvers,
 		subscription: true,
+		graphiql: config.graphiqlEnabled,
 	});
 
 	const publisher = new MercuriusPositionPublisher(app.graphql.pubsub);
