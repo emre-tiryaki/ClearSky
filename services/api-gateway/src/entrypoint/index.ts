@@ -6,7 +6,6 @@ import {resolvers} from "../graphql/resolvers/index.js"
 import { MercuriusPositionPublisher } from "../graphql/MercuriusPositionPublisher.js";
 import { AmqpConsumerManager } from "../messaging/AmqpConsumerManager.js";
 import { FlightMessageHandler } from "../messaging/FlightMessageHandler.js";
-import { error } from "node:console";
 
 async function main(): Promise<void> {
 	const config = loadConfig();
