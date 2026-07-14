@@ -1,17 +1,45 @@
-import type { FlightPosition } from '../../../../shared/index.js';
+import mercurius from "mercurius";
+import { loadConfig } from "../config/env.js";
+import Fastify from "fastify";
+import { typeDefs } from "../graphql/schema.js";
+import {resolvers} from "../graphql/resolvers/index.js"
+import { MercuriusPositionPublisher } from "../graphql/MercuriusPositionPublisher.js";
+import { AmqpConsumerManager } from "../messaging/AmqpConsumerManager.js";
+import { FlightMessageHandler } from "../messaging/FlightMessageHandler.js";
+import { error } from "node:console";
 
-const sampleFlightPosition: FlightPosition = {
-	icao24: '4b1800',
-	callsign: 'THY123',
-	longitude: 28.9784,
-	latitude: 41.0082,
-	altitude: 11000,
-	speed: 230,
-	heading: 180,
-	onGround: false,
-	verticalRate: 0,
-	timestamp: new Date(),
-};
+async function main(): Promise<void> {
+	const config = loadConfig();
+	const app = Fastify();
 
-console.log('Shared FlightPosition type is available:', sampleFlightPosition.icao24);
+	await app.register(mercurius, {
+		schema: typeDefs,
+		resolvers,
+		subscription: true,
+	});
 
+	const publisher = new MercuriusPositionPublisher(app.graphql.pubsub);
+
+	const consumerManager = new AmqpConsumerManager(
+		config.rabbitMqUrl,
+		config.exchangeName,
+		config.exchangeType,
+		config.queueName,
+		config.routingPattern,
+		config.prefetchCount,
+	);
+	await consumerManager.connect();
+
+	const messageHandler = new FlightMessageHandler(publisher);
+	await consumerManager.consume(message => messageHandler.handle(message));
+
+	await app.listen({port: config.port, host: "0.0.0.0"});
+
+	process.on('SIGTERM', () => app.close());
+    process.on('SIGINT', () => app.close());
+}
+
+main().catch(error => {
+	console.error("api-gateway service couldn't be started", error);
+	process.exit(1);
+})
