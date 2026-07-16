@@ -22,6 +22,6 @@ export const resolvers = {
         }
     },
     FlightPosition: {
-        timeStamp: (parent: FlightPosition) => parent.timestamp.toISOString(),
+        timestamp: (parent: FlightPosition) => parent.timestamp.toISOString(),
     }
 }
