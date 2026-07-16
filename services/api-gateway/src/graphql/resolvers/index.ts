@@ -16,5 +16,8 @@ export const resolvers = {
                 context.pubsub.subscribe(LIVE_FLIGHTS_TOPIC),
             resolve: (payload: FlightPosition) => payload,
         }
+    },
+    FlightPosition: {
+        timeStamp: (parent: FlightPosition) => parent.timestamp.toISOString(),
     }
 }
