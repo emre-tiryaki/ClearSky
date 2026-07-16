@@ -12,11 +12,18 @@ export const typeDefs = `
         timestamp: String!
     }
 
+    input BoundingBoxInput {
+        lamin: Float!
+        lomin: Float!
+        lamax: Float!
+        lomax: Float!
+    }
+
     type Query {
         _health: String!
     }
 
     type Subscription {
-        liveFlights: FlightPosition!
+        liveFlights(bbox: BoundingBoxInput!): FlightPosition!
     }
 `;
