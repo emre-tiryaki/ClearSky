@@ -25,7 +25,11 @@ async function main(): Promise<void> {
 		try {
 			const rawState = await openSkyClient.fetchStates();
 			const positions = normalizer.normalize(rawState);
+			// THIS CODE IS JUST FOR TESTING AND DOES NOT AFFECT ANY WORK IN THIS SERVICE.
+			// WILL PROBABLY BE DELETED WHEN MERGING.
+			console.log(`device-interface: ${rawState.length} raw vector, ${positions.length} normalized, publishing`);
 			await publisher.publish(positions);
+			console.log(`device-interface: ${positions.length} positions published`);
 		} catch (error) {
 			if (error instanceof OpenSkyRateLimitError) {
 				console.warn(`OpenSky Rate Limit: will retry after ${error.retryAfterSeconds} seconds`);
