@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "graphql": "^17.0.2",
+    "graphql-ws": "^6.1.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
