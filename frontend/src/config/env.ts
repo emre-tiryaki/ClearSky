@@ -10,7 +10,7 @@ function requireEnv(name: string): string {
     return value;
 }
 
-function loadConfig(): FrontendConfig {
+export function loadConfig(): FrontendConfig {
     return {
         VITE_GRAPHQL_WS_URL: requireEnv('VITE_GRAPHQL_WS_URL'),
     }
