@@ -25,7 +25,7 @@ async function main(): Promise<void> {
 
 	const publisher = new FlightPublisher(connectionManager, config.exchangeName);
 
-	const performCycle = async (): Promise<void> => {
+	const performCycle = async (): Promise<number | void> => {
 		try {
 			const rawState = await openSkyClient.fetchStates();
 			const positions = normalizer.normalize(rawState);
@@ -33,7 +33,7 @@ async function main(): Promise<void> {
 		} catch (error) {
 			if (error instanceof OpenSkyRateLimitError) {
 				console.warn(`OpenSky Rate Limit: will retry after ${error.retryAfterSeconds} seconds`);
-				return;
+				return error.retryAfterSeconds * 1000;
 			}
 
 			throw error;

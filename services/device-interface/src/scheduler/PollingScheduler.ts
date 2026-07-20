@@ -5,7 +5,7 @@ export class PollingScheduler {
 
     constructor(
         private readonly intervalMs: number,
-        private readonly task: () => Promise<void>,
+        private readonly task: () => Promise<number | void>,
     ) {}
 
     // Starts the polling loop if it is not already running.
@@ -29,17 +29,22 @@ export class PollingScheduler {
     private async tick(): Promise<void> {
         if(!this.isRunning) return;
 
+        let nextInterval = this.intervalMs;
+
         // TODO: make this something professional.
         try {
-            await this.task();
+            const result = await this.task();
+            if (typeof result === 'number') {
+                nextInterval = result;
+            }
         } catch(error) {
-            console.log("PollingScheduler: cycle is failed", error)
+            console.error("PollingScheduler: cycle is failed", error)
         }
 
         if (!this.isRunning) return;
 
         this.timer = setTimeout(() => {
             void this.tick();
-        }, this.intervalMs);
+        }, nextInterval);
     }
 }
