@@ -1,5 +1,7 @@
 export interface DeviceInterfaceConfig {
     openSkyBaseUrl: string;
+    openSkyUsername?: string | undefined;
+    openSkyPassword?: string | undefined;
     pollIntervalMs: number;
     rabbitMqUrl: string;
     exchangeName: string;
@@ -17,6 +19,8 @@ function requireEnv(name: string): string {
 export function loadConfig(): DeviceInterfaceConfig {
     return {
         openSkyBaseUrl: requireEnv('OPENSKY_BASE_URL'),
+        openSkyUsername: process.env.OPENSKY_USERNAME,
+        openSkyPassword: process.env.OPENSKY_PASSWORD,
         pollIntervalMs: Number(requireEnv('POLL_INTERVAL_MS')),
         rabbitMqUrl: requireEnv('RABBITMQ_URL'),
         exchangeName: requireEnv('RABBITMQ_EXCHANGE'),

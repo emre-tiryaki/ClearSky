@@ -9,7 +9,11 @@ import { PollingScheduler } from "../scheduler/PollingScheduler.js";
 async function main(): Promise<void> {
 	const config = loadConfig();
 
-	const openSkyClient = new OpenSkyClient(config.openSkyBaseUrl);
+	const openSkyClient = new OpenSkyClient(
+		config.openSkyBaseUrl,
+		config.openSkyUsername,
+		config.openSkyPassword
+	);
 	const normalizer = new StateVectorNormalizer();
 
 	const connectionManager = new AmqpConnectionManager(

@@ -24,7 +24,11 @@ export class OpenSkyRateLimitError extends Error {
 // Client wrapper for the OpenSky REST API.
 // It fetches raw state vectors and maps them into the local device-interface shape.
 export class OpenSkyClient {
-  constructor(private readonly baseUrl: string) {}
+  constructor(
+    private readonly baseUrl: string,
+    private readonly username?: string,
+    private readonly password?: string
+  ) {}
 
   // Fetches aircraft state vectors from OpenSky and returns  them in the local raw shape.
   async fetchStates(options: FetchStatesOptions = {}): Promise<RawStateVector[]> {
@@ -35,7 +39,13 @@ export class OpenSkyClient {
       url.searchParams.set('time', String(options.time));
     }
 
-    const response = await fetch(url);
+    const headers: Record<string, string> = {};
+    if (this.username && this.password) {
+      const token = Buffer.from(`${this.username}:${this.password}`).toString('base64');
+      headers['Authorization'] = `Basic ${token}`;
+    }
+
+    const response = await fetch(url, { headers });
 
     if (response.status === 429) {
       this.handleRateLimit(response);
