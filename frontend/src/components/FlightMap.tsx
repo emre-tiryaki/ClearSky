@@ -1,6 +1,8 @@
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import type { FlightPosition } from "../types/fligt";
 import { getPlaneIcon } from "./FlightMarkerIcon";
+import "leaflet/dist/leaflet.css";
+
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
