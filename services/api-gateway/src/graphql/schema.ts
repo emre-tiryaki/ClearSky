@@ -12,6 +12,13 @@ export const typeDefs = `
         timestamp: String!
     }
 
+    type SystemStatus {
+        type: String!
+        message: String!
+        retryAfterSeconds: Int
+        timestamp: String!
+    }
+
     input BoundingBoxInput {
         lamin: Float!
         lomin: Float!
@@ -25,5 +32,6 @@ export const typeDefs = `
 
     type Subscription {
         liveFlights(bbox: BoundingBoxInput!): FlightPosition!
+        systemStatus: SystemStatus!
     }
 `;
