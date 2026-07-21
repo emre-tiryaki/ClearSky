@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import type { BoundingBox } from "./types/fligt"
 import { useLiveFlights } from "./hooks/useLiveFlights";
 import { FlightMap } from "./components/FlightMap";
+import { useFlightTrail } from "./hooks/useFlightTrail";
 
 const TURKEY_BBOX: BoundingBox = {
   lamin: 34.0,
@@ -13,6 +14,7 @@ const TURKEY_BBOX: BoundingBox = {
 function App() {
   const bbox = useMemo(() => TURKEY_BBOX, []);
   const flights = useLiveFlights(bbox);
+  const trails = useFlightTrail(flights);
 
   return (
     <div className="h-screen w-screen flex flex-col">
@@ -21,7 +23,7 @@ function App() {
         <span className="text-sm text-slate-300">{flights.size} planes are showing</span>
       </header>
       <main className="flex-1">
-        <FlightMap flights={flights}/>
+        <FlightMap flights={flights} trails={trails}/>
       </main>
     </div>
   )

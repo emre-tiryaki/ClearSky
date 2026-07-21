@@ -2,16 +2,22 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import type { FlightPosition } from "../types/fligt";
 import { getPlaneIcon } from "./FlightMarkerIcon";
 import "leaflet/dist/leaflet.css";
-
+import type { TrailPoint } from "../types/trail";
+import { useState } from "react";
+import { FlightTrail } from "./FlightTrail";
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
+    trails: Map<string, TrailPoint[]>;
 }
 
 const TURKEY_CENTER: [number, number] = [39.0, 35.0];
 const DEFAULT_ZOOM = 6;
 
-export function FlightMap({flights}: FlightMapProps) {
+export function FlightMap({flights, trails}: FlightMapProps) {
+    const [selectedIcao24, setSelectedIcao24] = useState<string | null>(null);
+    const selectedTrail = selectedIcao24 ? trails.get(selectedIcao24) ?? [] : [];
+
     return (
         <MapContainer
             center={TURKEY_CENTER}
@@ -27,6 +33,9 @@ export function FlightMap({flights}: FlightMapProps) {
                     key={flight.icao24}
                     position={[flight.latitude, flight.longitude]}
                     icon={getPlaneIcon(flight.heading, flight.onGround)}
+                    eventHandlers={{
+                        click: () => setSelectedIcao24(flight.icao24),
+                    }}
                 >
                     <Popup>
                         <strong>{flight.callsign?.trim() || flight.icao24}</strong>
@@ -38,6 +47,7 @@ export function FlightMap({flights}: FlightMapProps) {
                     </Popup>
                 </Marker>
             ))}
+            <FlightTrail points={selectedTrail} />
         </MapContainer>
     )
 }
