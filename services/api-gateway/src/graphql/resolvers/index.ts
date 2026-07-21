@@ -4,6 +4,8 @@ import type { FlightPosition, SystemStatus } from "../../../../../shared/index.j
 import { filterByBoundingBox } from "../filterByBoundingBox.js";
 import type { BoundingBox } from "../BoundingBox.js";
 import { SYSTEM_STATUS_TOPIC } from "../../messaging/SystemStatusMessageHandler.js";
+import { withInitialValue } from "../withInıtialValue.js";
+import { systemStatusStore } from "../../messaging/SystemStatusStore.js";
 
 interface MercuriusContext {
     pubsub: PubSub;
@@ -22,8 +24,9 @@ export const resolvers = {
             resolve: (payload: FlightPosition) => payload,
         },
         systemStatus: {
-            subscribe: async (_root: unknown, _args: unknown, context: MercuriusContext) => {
-                return context.pubsub.subscribe(SYSTEM_STATUS_TOPIC);
+            subscribe: async (_root: unknown, args: unknown, context: MercuriusContext) => {
+                const source = await context.pubsub.subscribe(SYSTEM_STATUS_TOPIC) as AsyncIterableIterator<SystemStatus>;
+                return withInitialValue(systemStatusStore.get(), source);
             },
             resolve: (payload: SystemStatus) => payload,
         },
