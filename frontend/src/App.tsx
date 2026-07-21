@@ -19,7 +19,7 @@ function App() {
   return (
     <div className="h-screen w-screen flex flex-col">
       <header className="bg-slate-900 text-white px-4 py-2 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Clear Sky - Live Flight Dashboard</h1>
+        <h1 className="text-lg font-semibold">Clear Sky &mdash; Live Flight Dashboard</h1>
         <span className="text-sm text-slate-300">{flights.size} planes are showing</span>
       </header>
       <main className="flex-1">
