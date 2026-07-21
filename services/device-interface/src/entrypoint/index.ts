@@ -1,7 +1,8 @@
-import { error } from "node:console";
+import type { SystemStatusType } from "../../../../shared/index.js";
 import { loadConfig } from "../config/env.js";
 import { AmqpConnectionManager } from "../messaging/AmqpConnectionManager.js";
 import { FlightPublisher } from "../messaging/FlightPublisher.js";
+import { StatusPublisher } from "../messaging/StatusPublisher.js";
 import { StateVectorNormalizer } from "../normalizer/StateVectorNormalizer.js";
 import { OpenSkyClient, OpenSkyRateLimitError } from "../opensky/OpenSkyClient.js";
 import { PollingScheduler } from "../scheduler/PollingScheduler.js";
@@ -24,16 +25,36 @@ async function main(): Promise<void> {
 	await connectionManager.connect();
 
 	const publisher = new FlightPublisher(connectionManager, config.exchangeName);
+	const statusPublisher = new StatusPublisher(connectionManager, config.exchangeName);
+
+	let lastStatusType: SystemStatusType | null = null;
+
+	const publishStatusIfChanged = async (
+		type: SystemStatusType,
+		message: string,
+		retryAfterSeconds: number | null
+	): Promise<void> => {
+		if (type === lastStatusType) return;
+		
+		lastStatusType = type;
+		await statusPublisher.publish({type, message, retryAfterSeconds, timestamp: new Date()});
+	}
 
 	const performCycle = async (): Promise<number | void> => {
 		try {
 			const rawState = await openSkyClient.fetchStates();
 			const positions = normalizer.normalize(rawState);
 			await publisher.publish(positions);
+			await publishStatusIfChanged('OK', 'Data transfer is normal', null);
 		} catch (error) {
 			if (error instanceof OpenSkyRateLimitError) {
 				console.warn(`OpenSky Rate Limit: will retry after ${error.retryAfterSeconds} seconds`);
-				return error.retryAfterSeconds * 1000;
+				await publishStatusIfChanged(
+					'RATE_LIMITED',
+					'OpenSky Network API Rate limit is exceeded.',
+					error.retryAfterSeconds
+				)
+				return;
 			}
 
 			throw error;
