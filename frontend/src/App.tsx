@@ -3,6 +3,8 @@ import type { BoundingBox } from "./types/fligt"
 import { useLiveFlights } from "./hooks/useLiveFlights";
 import { FlightMap } from "./components/FlightMap";
 import { useFlightTrail } from "./hooks/useFlightTrail";
+import { useSystemStatus } from "./hooks/useSystemStatus";
+import { StatusBanner } from "./components/StatusBanner";
 
 const TURKEY_BBOX: BoundingBox = {
   lamin: 34.0,
@@ -15,6 +17,7 @@ function App() {
   const bbox = useMemo(() => TURKEY_BBOX, []);
   const flights = useLiveFlights(bbox);
   const trails = useFlightTrail(flights);
+  const systemStatus = useSystemStatus();
 
   return (
     <div className="h-screen w-screen flex flex-col">
@@ -22,6 +25,7 @@ function App() {
         <h1 className="text-lg font-semibold">Clear Sky &mdash; Live Flight Dashboard</h1>
         <span className="text-sm text-slate-300">{flights.size} planes are showing</span>
       </header>
+      <StatusBanner status={systemStatus}/>
       <main className="flex-1">
         <FlightMap flights={flights} trails={trails}/>
       </main>
