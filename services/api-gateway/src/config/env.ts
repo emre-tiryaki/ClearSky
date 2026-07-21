@@ -6,6 +6,8 @@ export interface ApiGatewayConfig {
     queueName: string;
     routingPattern: string;
     prefetchCount: number;
+    statusQueueName: string;
+    statusRoutingPattern: string;
     graphiqlEnabled: boolean;
 }
 
@@ -26,6 +28,8 @@ export function loadConfig(): ApiGatewayConfig {
         queueName: requireEnv('RABBITMQ_QUEUE'),
         routingPattern: requireEnv('RABBITMQ_ROUTING_PATTERN'),
         prefetchCount: Number(requireEnv('RABBITMQ_PREFETCH')),
+        statusQueueName: requireEnv('RABBITMQ_STATUS_QUEUE'),
+        statusRoutingPattern: requireEnv('RABBITMQ_STATUS_ROUTING_PATTERN'),
         graphiqlEnabled: Boolean(requireEnv('GRAPHIQL_ENABLED')),
     }
 }
