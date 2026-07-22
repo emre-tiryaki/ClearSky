@@ -9,6 +9,8 @@ export interface ApiGatewayConfig {
     statusQueueName: string;
     statusRoutingPattern: string;
     graphiqlEnabled: boolean;
+    mongoUri: string;
+    mongoDbName: string;
 }
 
 function requireEnv(name: string): string {
@@ -31,5 +33,7 @@ export function loadConfig(): ApiGatewayConfig {
         statusQueueName: requireEnv('RABBITMQ_STATUS_QUEUE'),
         statusRoutingPattern: requireEnv('RABBITMQ_STATUS_ROUTING_PATTERN'),
         graphiqlEnabled: Boolean(requireEnv('GRAPHIQL_ENABLED')),
+        mongoUri: requireEnv("MONGODB_URI"),
+        mongoDbName: requireEnv("MONGODB_DB_NAME"),
     }
 }
