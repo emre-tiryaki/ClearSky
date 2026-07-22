@@ -18,7 +18,7 @@ export function useSaveFlightRecord() {
         try {
             const result = await executeGraphQLMutation<SaveFlightRecordResult>(
                 SAVE_FLIGHT_RECORD_MUTATION,
-                { input: { icao24, note: note?.trim || undefined } }
+                { input: { icao24, note: note?.trim() || undefined } }
             );
             return result.saveFlightRecord;
         } catch (error) {

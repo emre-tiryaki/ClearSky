@@ -1,6 +1,6 @@
 import type { PubSub } from "mercurius";
 import { LIVE_FLIGHTS_TOPIC } from "../../messaging/FlightMessageHandler.js";
-import type { FlightPosition, SystemStatus } from "../../../../../shared/index.js";
+import type { FlightPosition, SavedFlightRecord, SystemStatus } from "../../../../../shared/index.js";
 import { filterByBoundingBox } from "../filterByBoundingBox.js";
 import type { BoundingBox } from "../BoundingBox.js";
 import { SYSTEM_STATUS_TOPIC } from "../../messaging/SystemStatusMessageHandler.js";
@@ -57,6 +57,13 @@ export function createResolvers(deps: ResolverDependencies) {
         },
         SystemStatus: {
             timestamp: (parent: SystemStatus) => parent.timestamp.toISOString(),
+        },
+        FlightRecord: {
+            id: (parent: SavedFlightRecord) => parent._id,
+            latitude: (parent: SavedFlightRecord) => parent.position.lat,
+            longitude: (parent: SavedFlightRecord) => parent.position.lon,
+            recordedAt: (parent: SavedFlightRecord) => parent.recordedAt.toISOString(),
+            savedAt: (parent: SavedFlightRecord) => parent.savedAt.toISOString()
         }
     }
 }

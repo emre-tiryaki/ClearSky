@@ -26,6 +26,22 @@ export const typeDefs = `
         lomax: Float!
     }
 
+    type FlightRecord {
+        id: ID!
+        icao24: String!
+        callsign: String
+        latitude: Float!
+        longitude: Float!
+        altitude: Float
+        velocity: Float
+        heading: Float
+        verticalRate: Float
+        onGround: Boolean!
+        recordedAt: String!
+        savedAt: String!
+        note: String
+    }
+
     input SaveFlightRecordInput {
         icao24: String!
         note: String
