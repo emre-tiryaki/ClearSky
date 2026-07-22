@@ -26,8 +26,17 @@ export const typeDefs = `
         lomax: Float!
     }
 
+    input SaveFlightRecordInput {
+        icao24: String!
+        note: String
+    }
+
     type Query {
         _health: String!
+    }
+
+    type Mutation {
+        saveFlightRecord(input: SaveFlightRecordInput!): FlightRecord!
     }
 
     type Subscription {
