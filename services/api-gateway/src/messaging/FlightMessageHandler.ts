@@ -1,14 +1,19 @@
 import type { ConsumeMessage } from "amqplib";
 import type { FlightPosition } from "../../../../shared/index.js";
 import type { PositionPublisher } from "../graphql/PositionPublisher.js";
+import type { LiveFlightStore } from "./LiveFlightStore.js";
 
 export const LIVE_FLIGHTS_TOPIC = "LIVE_FLIGHTS_UPDATED";
 
 export class FlightMessageHandler {
-    constructor(private readonly publisher: PositionPublisher) { }
+    constructor(
+        private readonly publisher: PositionPublisher,
+        private readonly store: LiveFlightStore,
+    ) { }
 
     async handle(message: ConsumeMessage): Promise<void> {
         const position = this.parse(message);
+        this.store.set(position);
         await this.publisher.publish(LIVE_FLIGHTS_TOPIC, position);
     }
 

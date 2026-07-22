@@ -7,7 +7,7 @@ export interface FlightRecordDocument {
     };
     altitude: number | null;
     velocity: number | null;
-    heading: number;
+    heading: number | null;
     verticalRate: number | null;
     onGround: boolean;
     recordedAt: Date;
