@@ -10,10 +10,13 @@ import { createResolvers } from "../graphql/resolvers/index.js";
 import { MongoConnection } from "../persistence/MongoConnection.js";
 import { FlightRepository } from "../persistence/FlightRepository.js";
 import { LiveFlightStore } from "../messaging/LiveFlightStore.js";
+import cors from "@fastify/cors";
 
 async function main(): Promise<void> {
 	const config = loadConfig();
 	const app = Fastify();
+	
+	await app.register(cors, {origin: true});
 
 	const mongoConnection = new MongoConnection(config.mongoUri, config.mongoDbName);
 	const db = await mongoConnection.connect();
