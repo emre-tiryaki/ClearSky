@@ -73,6 +73,7 @@ services:
       dockerfile: frontend/Dockerfile
       args:
         VITE_GRAPHQL_WS_URL: ${VITE_GRAPHQL_WS_URL}
+        VITE_GRAPHQL_HTTP_URL: ${VITE_GRAPHQL_HTTP_URL}
     container_name: clearsky-frontend
     ports:
       - "${FRONTEND_PORT}:80"

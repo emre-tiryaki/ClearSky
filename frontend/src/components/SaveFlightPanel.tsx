@@ -13,7 +13,7 @@ export function SaveFlightPanel({flight, saving, error, onSave, onClose}: SaveFl
     const [note, setNote] = useState("");
 
     return (
-        <div className="absolute right-4 top-16 w-72 rounded-lg bg-white p-4 shadow-lg">
+        <div className="absolute right-4 top-16 w-72 rounded-lg bg-white p-4 shadow-lg z-1000">
             <div className="flex items-center justify-between">
                 <h2 className="font-semibold">{flight.callsign?.trim() || flight.icao24}</h2>
                 <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
