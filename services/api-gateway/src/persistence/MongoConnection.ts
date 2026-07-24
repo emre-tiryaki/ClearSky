@@ -1,4 +1,4 @@
-import {Db, MongoClient, type ProxyOptions} from "mongodb";
+import {Db, MongoClient} from "mongodb";
 
 export class MongoConnection {
     private client: MongoClient | null = null;
