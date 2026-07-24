@@ -1,3 +1,4 @@
+import { OpenSkyAuthError, type OpenSkyTokenManager } from './OpenSkyTokenManager.js';
 import type { FetchStatesOptions, OpenSkyStatesResponse, OpenSkyStateVectorRaw, RawStateVector } from './types.ts';
 
 // Neccesary indexes from the raw state vector.
@@ -26,9 +27,8 @@ export class OpenSkyRateLimitError extends Error {
 export class OpenSkyClient {
   constructor(
     private readonly baseUrl: string,
-    private readonly username?: string,
-    private readonly password?: string
-  ) {}
+    private readonly tokenManager: OpenSkyTokenManager,
+  ) { }
 
   // Fetches aircraft state vectors from OpenSky and returns  them in the local raw shape.
   async fetchStates(options: FetchStatesOptions = {}): Promise<RawStateVector[]> {
@@ -39,13 +39,15 @@ export class OpenSkyClient {
       url.searchParams.set('time', String(options.time));
     }
 
-    const headers: Record<string, string> = {};
-    if (this.username && this.password) {
-      const token = Buffer.from(`${this.username}:${this.password}`).toString('base64');
-      headers['Authorization'] = `Basic ${token}`;
-    }
+    const token = await this.tokenManager.getToken();
+    const response = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
 
-    const response = await fetch(url, { headers });
+    if (response.status === 401) {
+      this.tokenManager.invalidate();
+      throw new OpenSkyAuthError(response.status);
+    }
 
     if (response.status === 429) {
       this.handleRateLimit(response);

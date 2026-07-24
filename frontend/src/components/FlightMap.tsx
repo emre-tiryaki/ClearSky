@@ -34,7 +34,7 @@ export function FlightMap({ flights, trails }: FlightMapProps) {
     };
 
     return (
-        <div>
+        <div style={{height: "100%", width: "100%"}}>
             <MapContainer
                 center={TURKEY_CENTER}
                 zoom={DEFAULT_ZOOM}

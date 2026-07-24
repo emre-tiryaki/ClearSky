@@ -5,16 +5,14 @@ import { FlightPublisher } from "../messaging/FlightPublisher.js";
 import { StatusPublisher } from "../messaging/StatusPublisher.js";
 import { StateVectorNormalizer } from "../normalizer/StateVectorNormalizer.js";
 import { OpenSkyClient, OpenSkyRateLimitError } from "../opensky/OpenSkyClient.js";
+import { OpenSkyAuthError, OpenSkyTokenManager } from "../opensky/OpenSkyTokenManager.js";
 import { PollingScheduler } from "../scheduler/PollingScheduler.js";
 
 async function main(): Promise<void> {
 	const config = loadConfig();
 
-	const openSkyClient = new OpenSkyClient(
-		config.openSkyBaseUrl,
-		config.openSkyUsername,
-		config.openSkyPassword
-	);
+	const tokenManager = new OpenSkyTokenManager(config.openSkyClientId, config.openSkyClientSecret);
+	const openSkyClient = new OpenSkyClient(config.openSkyBaseUrl, tokenManager);
 	const normalizer = new StateVectorNormalizer();
 
 	const connectionManager = new AmqpConnectionManager(
@@ -35,9 +33,9 @@ async function main(): Promise<void> {
 		retryAfterSeconds: number | null
 	): Promise<void> => {
 		if (type === lastStatusType) return;
-		
+
 		lastStatusType = type;
-		await statusPublisher.publish({type, message, retryAfterSeconds, timestamp: new Date()});
+		await statusPublisher.publish({ type, message, retryAfterSeconds, timestamp: new Date() });
 	}
 
 	const performCycle = async (): Promise<number | void> => {
@@ -53,6 +51,14 @@ async function main(): Promise<void> {
 					'RATE_LIMITED',
 					'OpenSky Network API Rate limit is exceeded.',
 					error.retryAfterSeconds
+				)
+				return;
+			} else if (error instanceof OpenSkyAuthError) {
+				console.warn(`OpenSky Auth Error: there is an authentication error: ${error.message}`);
+				await publishStatusIfChanged(
+					'AUTH_ERROR',
+					'OpenSky Network API auth error, token may not be valid.',
+					0
 				)
 				return;
 			}
