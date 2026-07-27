@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { FlightPosition } from "../types/fligt";
+import type { FlightPosition } from "../types/flight";
 import type { TrailPoint } from "../types/trail";
 
 const MAX_TRAIL_POINTS = 50;

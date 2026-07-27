@@ -1,5 +1,5 @@
 import type { LatLngBounds } from "leaflet";
-import type { BoundingBox } from "../types/fligt";
+import type { BoundingBox } from "../types/flight";
 import { useMap, useMapEvents } from "react-leaflet";
 import { useEffect } from "react";
 

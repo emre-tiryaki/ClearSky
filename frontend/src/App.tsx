@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import type { BoundingBox } from "./types/fligt";
+import type { BoundingBox } from "./types/flight";
 import { useLiveFlights } from "./hooks/useLiveFlights";
 import { FlightMap } from "./components/FlightMap";
 import { useFlightTrail } from "./hooks/useFlightTrail";

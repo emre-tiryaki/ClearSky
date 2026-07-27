@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getGraphQlWsClient } from "../graphql/client";
 import { LIVE_FLIGHTS_SUBSCRIPTION } from "../graphql/subscriptions";
-import type { BoundingBox, FlightPosition } from "../types/fligt";
+import type { BoundingBox, FlightPosition } from "../types/flight";
 
 const STALE_THRESHOLD_MS = 60_000;
 const PRUNE_INTERVAL_MS = 10_000;

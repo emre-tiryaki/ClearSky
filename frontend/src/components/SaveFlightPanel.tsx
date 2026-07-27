@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FlightPosition } from "../types/fligt";
+import type { FlightPosition } from "../types/flight";
 
 interface SaveFlightPanelProps {
     flight: FlightPosition;

@@ -1,5 +1,5 @@
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import type { BoundingBox, FlightPosition } from "../types/fligt";
+import type { BoundingBox, FlightPosition } from "../types/flight";
 import { getPlaneIcon } from "./FlightMarkerIcon";
 import "leaflet/dist/leaflet.css";
 import type { TrailPoint } from "../types/trail";
