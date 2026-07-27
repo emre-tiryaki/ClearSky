@@ -23,6 +23,20 @@ export function createResolvers(deps: ResolverDependencies) {
     return {
         Query: {
             _health: async () => "ok",
+            flightRecords: async (
+                _root: unknown,
+                args: {startDate: string, endDate: string}
+            ) => {
+                const start = new Date(args.startDate);
+                const end = new Date(args.endDate);
+                if (start > end)
+                    throw new GraphQLError("Start date cannot be later than end date!!!");
+
+                return deps.flightRepository.findByDateRange(start, end);
+            },
+            flightHistory: async (_root: unknown, args: {icao24: string}) => {
+                return deps.flightRepository.findByIcao24(args.icao24);
+            }
         },
         Mutation: {
             saveFlightRecord: async (
