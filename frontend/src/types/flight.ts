@@ -9,6 +9,7 @@ export interface FlightPosition {
     onGround: boolean;
     verticalRate: number | null;
     timestamp: string;
+    category: number;
 }
 
 export interface BoundingBox {

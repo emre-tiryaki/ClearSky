@@ -57,7 +57,7 @@ export function FlightMap({ flights, trails, onBoundsChange }: FlightMapProps) {
                     <Marker
                         key={flight.icao24}
                         position={[flight.latitude, flight.longitude]}
-                        icon={getPlaneIcon(flight.heading, flight.onGround)}
+                        icon={getPlaneIcon(flight.heading, flight.onGround, flight.category, flight.altitude)}
                         eventHandlers={{
                             click: () => setSelectedIcao24(flight.icao24),
                         }}
@@ -87,6 +87,9 @@ export function FlightMap({ flights, trails, onBoundsChange }: FlightMapProps) {
                             </div>
                             <div>
                                 On gorund: {flight.onGround ? `Yes` : "No"}
+                            </div>
+                            <div>
+                                Category: {flight.category}
                             </div>
                         </Popup>
                     </Marker>
