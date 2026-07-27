@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { BoundingBox } from "./types/fligt";
 import { useLiveFlights } from "./hooks/useLiveFlights";
 import { FlightMap } from "./components/FlightMap";
@@ -13,9 +13,17 @@ const TURKEY_BBOX: BoundingBox = {
     lamax: 43.5,
     lomax: 43.5,
 };
+const BBOX_DEBOUNCE_MS = 400;
 
 function App() {
-    const bbox = useMemo(() => TURKEY_BBOX, []);
+    const [bbox, setBbox] = useState<BoundingBox>(TURKEY_BBOX);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleBounceChange = useCallback((next: BoundingBox) => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => setBbox(next), BBOX_DEBOUNCE_MS);
+    }, []);
+
     const flights = useLiveFlights(bbox);
     const trails = useFlightTrail(flights);
     const systemStatus = useSystemStatus();
@@ -28,7 +36,7 @@ function App() {
                     Clear Sky &mdash; Live Flight Dashboard
                 </h1>
                 <span className="text-sm text-slate-300">
-                    {flights.size} planes are showing
+                    {flights.size > 0 ? `${flights.size}`: "No"} planes are showing
                 </span>
                 <button
                     onClick={() =>
@@ -42,7 +50,11 @@ function App() {
             <StatusBanner status={systemStatus} />
             <main className="flex-1">
                 {view === "map" ? (
-                    <FlightMap flights={flights} trails={trails} />
+                    <FlightMap
+                        flights={flights}
+                        trails={trails}
+                        onBoundsChange={handleBounceChange}
+                    />
                 ) : (
                     <ReportPage />
                 )}

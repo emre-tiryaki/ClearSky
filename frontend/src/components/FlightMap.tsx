@@ -1,5 +1,5 @@
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import type { FlightPosition } from "../types/fligt";
+import type { BoundingBox, FlightPosition } from "../types/fligt";
 import { getPlaneIcon } from "./FlightMarkerIcon";
 import "leaflet/dist/leaflet.css";
 import type { TrailPoint } from "../types/trail";
@@ -9,16 +9,18 @@ import { useSaveFlightRecord } from "../hooks/useSaveFlightRecord";
 import { SaveFlightPanel } from "./SaveFlightPanel";
 import { useFlightHistory } from "../hooks/useFlightHistory";
 import { FlightHistoryRoute } from "./FlightHistoryRoute";
+import { MapViewportSync } from "./MapViewportSync";
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
     trails: Map<string, TrailPoint[]>;
+    onBoundsChange: (bbox: BoundingBox) => void;
 }
 
 const TURKEY_CENTER: [number, number] = [39.0, 35.0];
 const DEFAULT_ZOOM = 6;
 
-export function FlightMap({ flights, trails }: FlightMapProps) {
+export function FlightMap({ flights, trails, onBoundsChange }: FlightMapProps) {
     const [selectedIcao24, setSelectedIcao24] = useState<string | null>(null);
     const selectedTrail = selectedIcao24
         ? (trails.get(selectedIcao24) ?? [])
@@ -89,6 +91,7 @@ export function FlightMap({ flights, trails }: FlightMapProps) {
                         </Popup>
                     </Marker>
                 ))}
+                <MapViewportSync onBoundsChange={onBoundsChange}/>
                 <FlightTrail points={selectedTrail} />
                 <FlightHistoryRoute records={history}/>
             </MapContainer>
