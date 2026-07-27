@@ -3,7 +3,7 @@ interface GraphQLResponse<T> {
     errors?: { message: string }[];
 }
 
-export async function executeGraphQLMutation<T>(
+export async function executeGraphQLOperation<T>(
     query:string,
     variables: Record<string, unknown>,
 ): Promise<T> {
