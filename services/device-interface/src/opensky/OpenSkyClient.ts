@@ -34,6 +34,7 @@ export class OpenSkyClient {
   // Fetches aircraft state vectors from OpenSky and returns  them in the local raw shape.
   async fetchStates(options: FetchStatesOptions = {}): Promise<RawStateVector[]> {
     const url = new URL(`${this.baseUrl}/states/all`);
+    url.searchParams.set('extended', '1');
 
     options.icao24?.forEach((code) => url.searchParams.append('icao24', code));
     if (options.time !== undefined) {

@@ -11,6 +11,7 @@ export const LIVE_FLIGHTS_SUBSCRIPTION = `
       onGround
       verticalRate
       timestamp
+      category
     }
   }
 `;
