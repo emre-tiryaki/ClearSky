@@ -18,19 +18,18 @@ function getCategoryPath(category: number): string {
     }
 }
 
-function getCategoryColor(category: number, onGround: boolean): string {
+function getDynamicColor(onGround: boolean, altitude: number | null, speed: number | null): string {
     if (onGround) return "#9ca3af"; // Gri
-    switch (category) {
-        case 8: 
-            return "#14b8a6"; // Turqoise (Helicopter)
-        case 4: case 5: case 6: 
-            return "#f97316"; // Orange (Big Planes)
-        case 14: return "#eab308"; // Yellow (Drone)
-        case 2: case 3: 
-            return "#2563eb"; // Blue (Small Planes)
-        default: 
-            return "#64748b"; // Blue-Gray for others
-    }
+
+    const alt = Math.max(0, altitude || 0);
+    const spd = Math.max(0, speed || 0);
+    const altRatio = Math.min(1, alt / 12000);
+    const speedRatio = Math.min(1, spd / 300);
+    const hue = Math.round(altRatio * 240);
+    
+    const lightness = Math.round(30 + speedRatio * 40);
+
+    return `hsl(${hue}, 100%, ${lightness}%)`;
 }
 
 function planeSvg(rotation: number, color: string, path: string): string {
@@ -41,28 +40,24 @@ function planeSvg(rotation: number, color: string, path: string): string {
     `;
 }
 
-export function getPlaneIcon(heading: number | null, onGround: boolean, category: number, altitude: number | null): L.DivIcon {
-    const rounded = Math.round((heading ?? 0) / ROUND_STEP) * ROUND_STEP;
+export function getPlaneIcon(heading: number | null, onGround: boolean, category: number, altitude: number | null, speed: number | null): L.DivIcon {
+    const roundedHeading = Math.round((heading ?? 0) / ROUND_STEP) * ROUND_STEP;
+    const roundedAlt = Math.round((altitude || 0) / 500) * 500;
+    const roundedSpeed = Math.round((speed || 0) / 20) * 20;
     
-    const alt = Math.max(0, altitude || 0);
-    const size = Math.round(20 + Math.min(1, alt / 10000) * 8);
-
-    const key = `${rounded}-${onGround}-${category}-${size}`;
-
+    const size = Math.round(20 + Math.min(1, Math.max(0, altitude || 0) / 10000) * 8); 
+    const key = `${roundedHeading}-${onGround}-${category}-${roundedAlt}-${roundedSpeed}-${size}`;
     const cached = iconCache.get(key);
-    if(cached) return cached;
-
-    const color = getCategoryColor(category, onGround);
+    if (cached) return cached;
+    const color = getDynamicColor(onGround, altitude, speed);
     const path = getCategoryPath(category);
-    const iconAnchor = Math.round(size/2);
-
+    const iconAnchor = Math.round(size / 2);
     const icon = L.divIcon({
         className: "flight-marker",
-        html: planeSvg(rounded, color, path),
+        html: planeSvg(roundedHeading, color, path),
         iconSize: [size, size],
         iconAnchor: [iconAnchor, iconAnchor],
     });
-
     iconCache.set(key, icon);
     return icon;
 }

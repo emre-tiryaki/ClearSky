@@ -81,7 +81,7 @@ export function FlightMap({ flights, trails, onBoundsChange }: FlightMapProps) {
                     <Marker
                         key={flight.icao24}
                         position={[flight.latitude, flight.longitude]}
-                        icon={getPlaneIcon(flight.heading, flight.onGround, flight.category, flight.altitude)}
+                        icon={getPlaneIcon(flight.heading, flight.onGround, flight.category, flight.altitude, flight.speed)}
                         eventHandlers={{
                             click: () => setSelectedIcao24(flight.icao24),
                         }}
