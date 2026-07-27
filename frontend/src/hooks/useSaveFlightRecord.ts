@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import type { FlightRecord } from "../types/FlightRecord";
-import { executeGraphQLMutation } from "../graphql/httpClient";
+import { executeGraphQLOperation } from "../graphql/httpClient";
 import { SAVE_FLIGHT_RECORD_MUTATION } from "../graphql/mutations";
 
 interface SaveFlightRecordResult {
@@ -16,7 +16,7 @@ export function useSaveFlightRecord() {
         setError(null);
 
         try {
-            const result = await executeGraphQLMutation<SaveFlightRecordResult>(
+            const result = await executeGraphQLOperation<SaveFlightRecordResult>(
                 SAVE_FLIGHT_RECORD_MUTATION,
                 { input: { icao24, note: note?.trim() || undefined } }
             );
