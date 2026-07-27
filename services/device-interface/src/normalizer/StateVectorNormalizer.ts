@@ -24,6 +24,7 @@ export class StateVectorNormalizer {
             onGround: vector.on_ground,
             verticalRate: vector.vertical_rate,
             timestamp: new Date(),
+            category: vector.category,
         }
     }
 }

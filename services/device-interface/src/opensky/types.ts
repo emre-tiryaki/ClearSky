@@ -20,6 +20,7 @@ export interface RawStateVector {
     velocity: number | null;
     true_track: number | null;
     vertical_rate: number | null;
+    category: number;
 }
 
 // response from the API

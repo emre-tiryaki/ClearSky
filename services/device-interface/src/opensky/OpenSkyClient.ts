@@ -12,6 +12,7 @@ const STATE_VECTOR_INDEX = {
   VELOCITY: 9,
   TRUE_TRACK: 10,
   VERTICAL_RATE: 11,
+  CATEGORY: 17,
 } as const;
 
 export class OpenSkyRateLimitError extends Error {
@@ -73,6 +74,7 @@ export class OpenSkyClient {
       velocity: vector[STATE_VECTOR_INDEX.VELOCITY] as number | null,
       true_track: vector[STATE_VECTOR_INDEX.TRUE_TRACK] as number | null,
       vertical_rate: vector[STATE_VECTOR_INDEX.VERTICAL_RATE] as number | null,
+      category: vector[STATE_VECTOR_INDEX.CATEGORY] as number || 0,
     };
   }
 

@@ -30,4 +30,7 @@ export interface FlightPosition {
 
     // Unix timestamp of the retrieved state.
     timestamp: Date;
+
+    // category of the aircraft.
+    category: number
 }
