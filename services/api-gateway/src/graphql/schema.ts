@@ -10,6 +10,7 @@ export const typeDefs = `
         onGround: Boolean!
         verticalRate: Float
         timestamp: String!
+        category: Int!
     }
 
     type SystemStatus {
