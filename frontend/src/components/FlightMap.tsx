@@ -3,10 +3,12 @@ import type { FlightPosition } from "../types/fligt";
 import { getPlaneIcon } from "./FlightMarkerIcon";
 import "leaflet/dist/leaflet.css";
 import type { TrailPoint } from "../types/trail";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlightTrail } from "./FlightTrail";
 import { useSaveFlightRecord } from "../hooks/useSaveFlightRecord";
 import { SaveFlightPanel } from "./SaveFlightPanel";
+import { useFlightHistory } from "../hooks/useFlightHistory";
+import { FlightHistoryRoute } from "./FlightHistoryRoute";
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
@@ -25,6 +27,7 @@ export function FlightMap({ flights, trails }: FlightMapProps) {
         ? (flights.get(selectedIcao24) ?? null)
         : null;
     const { save, saving, error } = useSaveFlightRecord();
+    const {fetch: fetchHistory, history} = useFlightHistory();
 
     const handleSave = async (note: string) => {
         if (!selectedIcao24) return;
@@ -32,6 +35,10 @@ export function FlightMap({ flights, trails }: FlightMapProps) {
         await save(selectedIcao24, note);
         setSelectedIcao24(null);
     };
+
+    useEffect(() => {
+        if (selectedIcao24) fetchHistory(selectedIcao24);
+    }, [selectedIcao24, fetchHistory])
 
     return (
         <div style={{height: "100%", width: "100%", position: "relative"}}>
@@ -83,6 +90,7 @@ export function FlightMap({ flights, trails }: FlightMapProps) {
                     </Marker>
                 ))}
                 <FlightTrail points={selectedTrail} />
+                <FlightHistoryRoute records={history}/>
             </MapContainer>
 
             {selectedFlight && (
