@@ -11,24 +11,11 @@ interface TrackedFlight {
     lastSeen: number;
 }
 
-function bboxKeyOf(lamin: number, lomin: number, lamax: number, lomax: number): string {
-    return `${lamin}:${lomin}:${lamax}:${lomax}`;
-}
-
 export function useLiveFlights(bbox: BoundingBox): Map<string, FlightPosition> {
     const { lamin, lomin, lamax, lomax } = bbox;
-    const bboxKey = bboxKeyOf(lamin, lomin, lamax, lomax);
-
+    
     const [tracked, setTracked] = useState<Map<string, TrackedFlight>>(new Map());
-    const [prevBboxKey, setPrevBboxKey] = useState(bboxKey);
-
-    // Render sirasinda state ayarlama: sadece state, ref yok. Tek kaynak
-    // "tracked" oldugu icin ikinci bir yapiyi senkronize tutma sorunu kalmadi.
-    if (bboxKey !== prevBboxKey) {
-        setPrevBboxKey(bboxKey);
-        setTracked(new Map());
-    }
-
+    
     useEffect(() => {
         const client = getGraphQlWsClient();
         const currentBbox: BoundingBox = { lamin, lomin, lamax, lomax };
