@@ -49,6 +49,8 @@ export const typeDefs = `
 
     type Query {
         _health: String!
+        flightRecords(startDate: String!, endDate: String!): [FlightRecord!]!
+        flightHistory(icao24: String!): [FlightRecord!]!
     }
 
     type Mutation {
