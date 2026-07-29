@@ -51,7 +51,7 @@ export class OpenSkyTokenManager {
 
         const payload = (await response.json()) as TokenResponse;
         this.token = payload.access_token;
-        this.expiresAt = Date.now() * (payload.expires_in - REFRESH_MARGIN_SECONDS) * 1000  ;
+        this.expiresAt = Date.now() + (payload.expires_in - REFRESH_MARGIN_SECONDS) * 1000  ;
 
         return this.token;
     }
