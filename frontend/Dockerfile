@@ -1,11 +1,17 @@
 FROM node:22-alpine AS build
 
-WORKDIR /app/frontend
+WORKDIR /app
 
-COPY frontend/package*.json ./
+COPY frontend/package*.json ./frontend/
+
+WORKDIR /app/frontend
 RUN npm ci
 
-COPY frontend ./
+WORKDIR /app
+COPY shared ./shared
+COPY frontend ./frontend
+
+WORKDIR /app/frontend
 
 ARG VITE_GRAPHQL_WS_URL
 ENV VITE_GRAPHQL_WS_URL=${VITE_GRAPHQL_WS_URL}
