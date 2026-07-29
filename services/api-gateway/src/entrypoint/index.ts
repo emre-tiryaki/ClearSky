@@ -2,7 +2,7 @@ import mercurius from "mercurius";
 import { loadConfig } from "../config/env.js";
 import Fastify from "fastify";
 import { typeDefs } from "../graphql/schema.js";
-import { MercuriusPositionPublisher } from "../graphql/MercuriusPositionPublisher.js";
+import { MercuriusEventPublisher } from "../graphql/MercuriusEventPublisher.js";
 import { AmqpConsumerManager } from "../messaging/AmqpConsumerManager.js";
 import { FlightMessageHandler } from "../messaging/FlightMessageHandler.js";
 import { SystemStatusMessageHandler } from "../messaging/SystemStatusMessageHandler.js";
@@ -32,7 +32,7 @@ async function main(): Promise<void> {
 		graphiql: config.graphiqlEnabled,
 	});
 
-	const publisher = new MercuriusPositionPublisher(app.graphql.pubsub);
+	const publisher = new MercuriusEventPublisher(app.graphql.pubsub);
 
 	const consumerManager = new AmqpConsumerManager(
 		config.rabbitMqUrl,

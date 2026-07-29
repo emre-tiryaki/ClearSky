@@ -1,6 +1,6 @@
 import type { ConsumeMessage } from "amqplib";
 import type { FlightPosition } from "../../../../shared/index.js";
-import type { PositionPublisher } from "../graphql/EventPublisher.js";
+import type { EventPublisher } from "../graphql/EventPublisher.js";
 import type { LiveFlightStore } from "./LiveFlightStore.js";
 import type { QueueMessageHandler } from "./QueueMessageHandler.js";
 
@@ -8,7 +8,7 @@ export const LIVE_FLIGHTS_TOPIC = "LIVE_FLIGHTS_UPDATED";
 
 export class FlightMessageHandler implements QueueMessageHandler {
     constructor(
-        private readonly publisher: PositionPublisher,
+        private readonly publisher: EventPublisher,
         private readonly store: LiveFlightStore,
     ) { }
 
