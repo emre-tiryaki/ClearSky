@@ -46,7 +46,6 @@ export function useLiveFlights(bbox: BoundingBox): {
                 const next = new Map(prev);
                 const now = Date.now();
                 
-                // Uçaklara göre gelen verileri grupla (geçmiş verilerin ezilmemesi için)
                 const grouped = new Map<string, FlightPosition[]>();
                 for (const pos of batch) {
                     if (!grouped.has(pos.icao24)) grouped.set(pos.icao24, []);
@@ -57,7 +56,6 @@ export function useLiveFlights(bbox: BoundingBox): {
                     const latest = positions[positions.length - 1];
                     const existing = next.get(icao24);
                     
-                    // Yeni gelen pozisyonları trail formatına dönüştür
                     const newTrailPoints = positions.map(p => ({
                         lat: p.latitude,
                         lon: p.longitude,
@@ -65,15 +63,12 @@ export function useLiveFlights(bbox: BoundingBox): {
                         timestamp: p.timestamp
                     }));
 
-                    // Varsa eskinin üstüne ekle
                     const combinedTrail = existing ? [...existing.trail, ...newTrailPoints] : newTrailPoints;
                     
-                    // Mükerrer olanları (aynı timestamp) filtrele ve tarihe göre sırala
                     const uniqueTrails = new Map(combinedTrail.map(t => [t.timestamp, t]));
                     let finalTrail = Array.from(uniqueTrails.values())
                         .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
                     
-                    // Limiti aşarsa en eskileri sil
                     if (finalTrail.length > MAX_TRAIL_POINTS) {
                         finalTrail = finalTrail.slice(-MAX_TRAIL_POINTS);
                     }
@@ -106,7 +101,6 @@ export function useLiveFlights(bbox: BoundingBox): {
         };
     }, [lamin, lomin, lamax, lomax]);
 
-    // Bileşenlere kullanımı kolay Map'ler halinde ver
     const flights = new Map<string, FlightPosition>();
     const trails = new Map<string, TrailPoint[]>();
     for (const [icao24, entry] of tracked) {
