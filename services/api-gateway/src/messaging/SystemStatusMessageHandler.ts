@@ -1,5 +1,5 @@
 import type { ConsumeMessage } from "amqplib";
-import type { PositionPublisher } from "../graphql/PositionPublisher.js";
+import type { PositionPublisher } from "../graphql/EventPublisher.js";
 import type { SystemStatus } from "../../../../shared/index.js";
 import { systemStatusStore } from "./SystemStatusStore.js";
 import type { QueueMessageHandler } from "./QueueMessageHandler.js";

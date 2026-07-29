@@ -1,5 +1,5 @@
 import type { PubSub } from "mercurius";
-import type { PositionPublisher } from "./PositionPublisher.js";
+import type { PositionPublisher } from "./EventPublisher.js";
 
 export class MercuriusPositionPublisher implements PositionPublisher {
     constructor(private readonly pubsub: PubSub) { }
