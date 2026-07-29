@@ -1,11 +1,7 @@
-import type { FlightPosition } from "../../../../shared/index.js";
+import type { BoundingBox, FlightPosition } from "../../../../shared/index.js";
 
-export interface BoundingBox {
-    lamin: number;
-    lomin: number;
-    lamax: number;
-    lomax: number;
-}
+// This is for not breaking anywhere else in this service.
+export type { BoundingBox }
 
 export function isWithinBoundingBox(position: FlightPosition, box: BoundingBox): boolean {
     return (
