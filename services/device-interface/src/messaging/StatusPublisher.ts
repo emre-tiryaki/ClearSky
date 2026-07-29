@@ -12,12 +12,11 @@ export class StatusPublisher implements AmqpPublisher<SystemStatus> {
     ) {}
 
     async publish(status: SystemStatus): Promise<void> {
-        const channel = this.connectionManager.getChannel();
-        channel.publish(this.exchange, STATUS_ROUTING_KEY, Buffer.from(
-            JSON.stringify(status)
-        ), {
-            contentType: "application/json",
-            persistent: false
-        });
+        this.connectionManager.publishJson(
+            this.exchange,
+            STATUS_ROUTING_KEY,
+            status,
+            false,
+        );
     }
 }
