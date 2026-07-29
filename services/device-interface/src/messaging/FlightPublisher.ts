@@ -11,16 +11,12 @@ export class FlightPublisher implements AmqpPublisher<FlightPosition[]>{
 
     // Sends each flight position as a JSON message to the broker.
     async publish(positions: FlightPosition[]): Promise<void> {
-        const channel = this.connectionManager.getChannel();
-
         for(const position of positions) {
-            const routingKey = this.buildRoutingKey(position.icao24);
-            channel.publish(this.exchange, routingKey, Buffer.from(
-                JSON.stringify(position)
-            ), {
-                contentType: 'application/json',
-                persistent: true
-            })
+            this.connectionManager.publishJson(
+                this.exchange,
+                this.buildRoutingKey(position.icao24),
+                position,
+            );
         }
     }
 
