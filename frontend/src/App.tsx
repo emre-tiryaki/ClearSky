@@ -2,7 +2,6 @@ import { useCallback, useRef, useState } from "react";
 import type { BoundingBox } from "./types/flight";
 import { useLiveFlights } from "./hooks/useLiveFlights";
 import { FlightMap } from "./components/FlightMap";
-import { useFlightTrail } from "./hooks/useFlightTrail";
 import { useSystemStatus } from "./hooks/useSystemStatus";
 import { StatusBanner } from "./components/StatusBanner";
 import { ReportPage } from "./pages/ReportPage";
@@ -25,7 +24,6 @@ function App() {
     }, []);
 
     const flights = useLiveFlights(bbox);
-    const trails = useFlightTrail(flights);
     const systemStatus = useSystemStatus();
     const [view, setView] = useState<"map" | "report">("map");
 
@@ -52,7 +50,7 @@ function App() {
                 {view === "map" ? (
                     <FlightMap
                         flights={flights}
-                        trails={trails}
+                        bbox={bbox}
                         onBoundsChange={handleBounceChange}
                     />
                 ) : (

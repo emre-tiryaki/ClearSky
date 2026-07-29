@@ -2,9 +2,9 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import type { BoundingBox, FlightPosition } from "../types/flight";
 import { getPlaneIcon } from "./FlightMarkerIcon";
 import "leaflet/dist/leaflet.css";
-import type { TrailPoint } from "../types/trail";
 import { useEffect, useState } from "react";
 import { FlightTrail } from "./FlightTrail";
+import { useFlightTrail } from "../hooks/useFlightTrail";
 import { useSaveFlightRecord } from "../hooks/useSaveFlightRecord";
 import { SaveFlightPanel } from "./SaveFlightPanel";
 import { useFlightHistory } from "../hooks/useFlightHistory";
@@ -14,7 +14,7 @@ import { getCategoryName } from "../utils/categoryMapper";
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
-    trails: Map<string, TrailPoint[]>;
+    bbox: BoundingBox;
     onBoundsChange: (bbox: BoundingBox) => void;
 }
 
@@ -23,14 +23,19 @@ const DEFAULT_ZOOM = 6;
 
 // Full-screen Leaflet map that renders aircraft markers with heading-rotated icons,
 // live trail polylines, historical route overlays, and a save-flight side panel.
-export function FlightMap({ flights, trails, onBoundsChange }: FlightMapProps) {
+export function FlightMap({ flights, bbox, onBoundsChange }: FlightMapProps) {
     const [selectedIcao24, setSelectedIcao24] = useState<string | null>(null);
-    const selectedTrail = selectedIcao24
-        ? (trails.get(selectedIcao24) ?? [])
-        : [];
     const selectedFlight = selectedIcao24
         ? (flights.get(selectedIcao24) ?? null)
         : null;
+
+    const trackedForTrail = new Map();
+    if (selectedIcao24 && selectedFlight) {
+        trackedForTrail.set(selectedIcao24, selectedFlight);
+    }
+    const trails = useFlightTrail(trackedForTrail);
+    const selectedTrail = selectedIcao24 ? (trails.get(selectedIcao24) ?? []) : [];
+
     const { save, saving, error } = useSaveFlightRecord();
     const {fetch: fetchHistory, history} = useFlightHistory();
 
@@ -50,13 +55,17 @@ export function FlightMap({ flights, trails, onBoundsChange }: FlightMapProps) {
             <MapContainer
                 center={TURKEY_CENTER}
                 zoom={DEFAULT_ZOOM}
+                preferCanvas={true}
                 style={{ height: "100%", width: "100%" }}
             >
                 <TileLayer
                     attribution="&copy; OpenStreetMap contributors"
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {Array.from(flights.values()).map((flight) => (
+                {Array.from(flights.values()).filter(f => 
+                    f.latitude >= bbox.lamin && f.latitude <= bbox.lamax &&
+                    f.longitude >= bbox.lomin && f.longitude <= bbox.lomax
+                ).map((flight) => (
                     <Marker
                         key={flight.icao24}
                         position={[flight.latitude, flight.longitude]}

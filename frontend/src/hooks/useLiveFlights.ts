@@ -22,24 +22,38 @@ export function useLiveFlights(bbox: BoundingBox): Map<string, FlightPosition> {
     useEffect(() => {
         const client = getGraphQlWsClient();
         const currentBbox: BoundingBox = { lamin, lomin, lamax, lomax };
+        
+        // Buffer for incoming flights
+        let buffer: FlightPosition[] = [];
 
         const unsubscribe = client.subscribe<{ liveFlights: FlightPosition }>(
             { query: LIVE_FLIGHTS_SUBSCRIPTION, variables: { bbox: currentBbox } },
             {
                 next: ({ data }) => {
                     const position = data?.liveFlights;
-                    if (!position) return;
-
-                    setTracked(prev => {
-                        const next = new Map(prev);
-                        next.set(position.icao24, { position, lastSeen: Date.now() });
-                        return next;
-                    });
+                    if (position) buffer.push(position);
                 },
                 error: err => console.error("liveFlights subscription hatasi", err),
                 complete: () => console.warn("liveFlights subscription tamamlandi"),
             },
         );
+
+        // Batch update state every 500ms
+        const flushTimer = setInterval(() => {
+            if (buffer.length === 0) return;
+            
+            const batch = buffer;
+            buffer = []; // clear buffer
+
+            setTracked(prev => {
+                const next = new Map(prev);
+                const now = Date.now();
+                for (const position of batch) {
+                    next.set(position.icao24, { position, lastSeen: now });
+                }
+                return next;
+            });
+        }, 500);
 
         const pruneTimer = setInterval(() => {
             const now = Date.now();
@@ -61,6 +75,7 @@ export function useLiveFlights(bbox: BoundingBox): Map<string, FlightPosition> {
 
         return () => {
             unsubscribe();
+            clearInterval(flushTimer);
             clearInterval(pruneTimer);
         };
     }, [lamin, lomin, lamax, lomax]);
