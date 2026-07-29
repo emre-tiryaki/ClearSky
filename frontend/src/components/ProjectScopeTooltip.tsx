@@ -17,16 +17,15 @@ export function ProjectScopeTooltip() {
             {/* State 'true' ise kutuyu render et */}
             {isVisible && (
                 <div className="absolute right-0 top-full mt-2 w-64 bg-slate-800 border border-slate-700 text-slate-200 text-xs p-3 rounded-md shadow-xl z-1000">
-                    <strong className="text-white">Proje Kapsamı:</strong>
+                    <strong className="text-white">Project Scope:</strong>
                     <ul className="list-disc ml-4 mt-1 mb-3 text-slate-300">
-                        <li>Gerçek zamanlı uçak pozisyonları</li>
-                        <li>Geçmiş rotaların haritada gösterimi</li>
-                        <li>Kullanıcı notlarıyla veri kaydetme</li>
+                        <li>Real Time aircraft render</li>
+                        <li>Saving aircraft with user notes</li>
                     </ul>
-                    <strong className="text-white">Kapsam Dışı:</strong>
+                    <strong className="text-white">Out Of Project Scope:</strong>
                     <ul className="list-disc ml-4 mt-1 text-slate-300">
-                        <li>Yolcu ve biletleme bilgileri</li>
-                        <li>Canlı hava durumu verileri</li>
+                        <li>Seeing past aircrafts on the map</li>
+                        <li>Seeing an aircrafts past route before the render</li>
                     </ul>
                 </div>
             )}
