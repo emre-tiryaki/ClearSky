@@ -2,7 +2,7 @@ import type { FlightPosition } from "../../../../shared/index.js";
 import type { AmqpConnectionManager } from "./AmqpConnectionManager.js";
 import type { AmqpPublisher } from "./AmqpPublisher.js";
 
-// Publishes normalized flight positions to the configured AMQP exchange.
+// Publishes normalized flight positions to the AMQP exchange, one message per aircraft.
 export class FlightPublisher implements AmqpPublisher<FlightPosition[]>{
     constructor(
         private readonly connectionManager: AmqpConnectionManager,

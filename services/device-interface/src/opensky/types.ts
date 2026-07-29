@@ -1,4 +1,4 @@
-// Fetching option type: these options are for specifying the fetching request
+// Options for the OpenSky `/states/all` endpoint request.
 export interface FetchStatesOptions {
     //The time in Unix time stamp to retrieve states for. Current time will be used if omitted.
     time?: number;
@@ -9,9 +9,9 @@ export interface FetchStatesOptions {
     icao24?: string[];
 }
 
+// Parsed state vector with named fields used internally by the device-interface service.
 export interface RawStateVector {
     icao24: string;
-
     callsign: string | null;
     longitude: number | null;
     latitude: number | null;
@@ -23,7 +23,7 @@ export interface RawStateVector {
     category: number;
 }
 
-// response from the API
+// Raw JSON response from the OpenSky `/states/all` endpoint.
 export interface OpenSkyStatesResponse {
     // The time which the state vectors in this response are associated with. 
     // All vectors represent the state of a vehicle with the interval [𝑡⁢𝑖⁢𝑚⁢𝑒 −1,𝑡⁢𝑖⁢𝑚⁢𝑒].
@@ -33,7 +33,7 @@ export interface OpenSkyStatesResponse {
     states: OpenSkyStateVectorRaw[] | null;
 }
 
-// Raw state response type
+// Positional tuple as returned by the OpenSky API (one entry per aircraft).
 export type OpenSkyStateVectorRaw = [
     // 0: icao24 - Unique ICAO 24-bit address of the transponder in hex string representation.
     string,

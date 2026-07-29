@@ -15,6 +15,7 @@ const STATE_VECTOR_INDEX = {
   CATEGORY: 17,
 } as const;
 
+// Thrown when the OpenSky API responds with HTTP 429 (Too Many Requests).
 export class OpenSkyRateLimitError extends Error {
   // Thrown when the OpenSky API asks the client to slow down and retry later.
   constructor(public readonly retryAfterSeconds: number) {
@@ -23,8 +24,9 @@ export class OpenSkyRateLimitError extends Error {
   }
 }
 
-// Client wrapper for the OpenSky REST API.
-// It fetches raw state vectors and maps them into the local device-interface shape.
+
+// HTTP client for the OpenSky Network REST API.
+// Fetches raw state vectors and maps them into the local RawStateVector shape.
 export class OpenSkyClient {
   constructor(
     private readonly baseUrl: string,

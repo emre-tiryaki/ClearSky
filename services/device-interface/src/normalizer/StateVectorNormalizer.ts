@@ -3,7 +3,7 @@ import type { RawStateVector } from "../opensky/types.js";
 
 // Converts raw OpenSky state vectors into the shared FlightPosition shape.
 export class StateVectorNormalizer {
-    // Keeps only vectors with usable coordinates and maps them to flight positions.
+    // Filters out vectors with null coordinates and maps the rest to FlightPosition objects.
     normalize(raw: RawStateVector[]): FlightPosition[] {
         return raw
             .filter((vector): vector is RawStateVector & { longitude: number; latitude: number } =>
@@ -11,7 +11,7 @@ export class StateVectorNormalizer {
             .map(vector => this.mapFields(vector));
     }
 
-    // Translates a single state vector into the normalized flight position model.
+    // Maps one raw state vector to the normalized FlightPosition model.
     mapFields(vector: RawStateVector & { longitude: number; latitude: number; }): FlightPosition {
         return {
             icao24: vector.icao24,

@@ -4,6 +4,7 @@ import type { AmqpPublisher } from "./AmqpPublisher.js";
 
 const STATUS_ROUTING_KEY = "system.status";
 
+// Publishes system health-check status messages to the AMQP exchange.
 export class StatusPublisher implements AmqpPublisher<SystemStatus> {
     constructor(
         private readonly connectionManager: AmqpConnectionManager,

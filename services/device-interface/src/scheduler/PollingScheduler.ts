@@ -1,4 +1,5 @@
 // Runs a task on a fixed polling interval until stopped.
+// If the task returns a number, that value overrides the interval for the next cycle.
 export class PollingScheduler {
     private isRunning = false;
     private timer: NodeJS.Timeout | null = null;

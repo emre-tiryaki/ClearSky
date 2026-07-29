@@ -1,3 +1,4 @@
+// Configuration shape for the device-interface service.
 export interface DeviceInterfaceConfig {
     openSkyBaseUrl: string;
     openSkyClientId: string;

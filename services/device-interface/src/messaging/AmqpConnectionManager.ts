@@ -1,6 +1,7 @@
 import amqplib, { type Channel } from "amqplib";
 
 // Manages the AMQP connection and channel lifecycle for the service.
+// Handles automatic reconnection with a retry loop on connection loss.
 export class AmqpConnectionManager {
     private connection: amqplib.ChannelModel | null = null;
     private channel: Channel | null = null;
