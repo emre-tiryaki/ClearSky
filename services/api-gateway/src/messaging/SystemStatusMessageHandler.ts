@@ -2,10 +2,11 @@ import type { ConsumeMessage } from "amqplib";
 import type { PositionPublisher } from "../graphql/PositionPublisher.js";
 import type { SystemStatus } from "../../../../shared/index.js";
 import { systemStatusStore } from "./SystemStatusStore.js";
+import type { QueueMessageHandler } from "./QueueMessageHandler.js";
 
 export const SYSTEM_STATUS_TOPIC = 'SYSTEM_STATUS_UPDATED';
 
-export class SystemStatusMessageHandler {
+export class SystemStatusMessageHandler implements QueueMessageHandler{
     constructor(private readonly publisher: PositionPublisher) {}
 
     async handle(messsage: ConsumeMessage): Promise<void> {
