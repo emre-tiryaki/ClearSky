@@ -77,7 +77,7 @@ export function FlightMap({ flights, trails, onBoundsChange }: FlightMapProps) {
                             <div>
                                 speed:{" "}
                                 {flight.speed != null
-                                    ? `${Math.round(flight.speed)} km/h`
+                                    ? `${Math.round(flight.speed)} m/s`
                                     : "-"}
                             </div>
                             <div>
