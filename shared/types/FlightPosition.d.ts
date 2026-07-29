@@ -1,4 +1,4 @@
-// Aircraft object
+// Real-time snapshot of a single aircraft's position and motion state.
 export interface FlightPosition {
     // Unique ICAO 24-bit address of the transponder in hex string representation.
     icao24: string;

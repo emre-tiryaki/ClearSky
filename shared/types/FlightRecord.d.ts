@@ -1,3 +1,4 @@
+// Raw document shape stored in the MongoDB `flight_records` collection.
 export interface FlightRecordDocument {
     icao24: string;
     callsign: string | null;
@@ -16,6 +17,7 @@ export interface FlightRecordDocument {
     category: number;
 }
 
+// A FlightRecordDocument that has been persisted and assigned a MongoDB `_id`.
 export interface SavedFlightRecord extends FlightRecordDocument {
     _id: string;
 }
