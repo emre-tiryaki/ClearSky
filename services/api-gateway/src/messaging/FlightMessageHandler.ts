@@ -6,6 +6,9 @@ import type { QueueMessageHandler } from "./QueueMessageHandler.js";
 
 export const LIVE_FLIGHTS_TOPIC = "LIVE_FLIGHTS_UPDATED";
 
+// Handles incoming flight-position messages from RabbitMQ.
+// Parses the JSON body, updates the in-memory live store,
+// and publishes the position to GraphQL subscribers.
 export class FlightMessageHandler implements QueueMessageHandler {
     constructor(
         private readonly publisher: EventPublisher,

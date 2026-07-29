@@ -10,15 +10,20 @@ import { GraphQLError } from "graphql"
 import { FlightRepository } from "../../persistence/FlightRepository.js";
 import type { LiveFlightStore } from "../../messaging/LiveFlightStore.js";
 
+// Mercurius context injected into every resolver.
 interface MercuriusContext {
     pubsub: PubSub;
 }
 
+// Dependencies injected into the resolver factory. 
 interface ResolverDependencies {
     liveFlightStore: LiveFlightStore,
     flightRepository: FlightRepository
 }
 
+// Creates the GraphQL resolver map.
+// Queries read from the live store and MongoDB; subscriptions stream via PubSub.
+// Field resolvers handle Date-to-ISO serialization and nested document flattening.
 export function createResolvers(deps: ResolverDependencies) {
     return {
         Query: {

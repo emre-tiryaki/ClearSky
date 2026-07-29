@@ -3,6 +3,8 @@ import type { FlightPosition, FlightRecordDocument, SavedFlightRecord } from "..
 
 const COLLECTION_NAME = 'flight_records'
 
+// Data-access layer for the `flight_records` MongoDB collection.
+// Creates a compound index on (icao24, recordedAt) at startup.
 export class FlightRepository {
     private readonly collection: Collection<FlightRecordDocument>;
 

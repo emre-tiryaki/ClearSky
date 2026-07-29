@@ -12,6 +12,9 @@ import { FlightRepository } from "../persistence/FlightRepository.js";
 import { LiveFlightStore } from "../messaging/LiveFlightStore.js";
 import cors from "@fastify/cors";
 
+// API Gateway entry point.
+// Boots Fastify + Mercurius (GraphQL with subscriptions), connects to MongoDB,
+// and registers RabbitMQ consumers for flight-position and system-status messages.
 async function main(): Promise<void> {
 	const config = loadConfig();
 	const app = Fastify();

@@ -1,5 +1,6 @@
 import {Db, MongoClient} from "mongodb";
 
+// Manages a single MongoDB client connection and exposes the target database.
 export class MongoConnection {
     private client: MongoClient | null = null;
     private db: Db | null = null

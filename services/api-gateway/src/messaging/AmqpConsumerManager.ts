@@ -2,6 +2,8 @@ import { connect, type Channel, type ChannelModel, type ConsumeMessage } from "a
 
 export type MessageHandler = (message: ConsumeMessage) => Promise<void>;
 
+// Manages a single RabbitMQ queue: connects, binds to a topic exchange,
+// and consumes messages with per-message ack/nack error handling.
 export class AmqpConsumerManager {
     private connection: ChannelModel | null = null;
     private channel: Channel | null = null;

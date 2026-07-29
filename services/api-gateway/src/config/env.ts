@@ -1,3 +1,4 @@
+// Configuration shape for the api-gateway service.
 export interface ApiGatewayConfig {
     port: number;
     rabbitMqUrl: string;
