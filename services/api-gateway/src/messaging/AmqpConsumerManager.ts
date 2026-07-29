@@ -27,6 +27,7 @@ export class AmqpConsumerManager {
         await this.bindQueue(this.routingPattern);
     }
 
+    // Consumes messages from the Amqp queue
     async consume(handler: MessageHandler): Promise<void> {
         const channel = this.getChannel();
 
@@ -41,22 +42,28 @@ export class AmqpConsumerManager {
                 });
         });
     }
+
+    // Sends a nack signal to amqp, meaning that the message is not handled.
     private nack(msg: ConsumeMessage) {
         this.getChannel().nack(msg, false, false);
     }
 
+    // Sends a ack signal to amqp, meaning that the message is handled and can be removed.
     private ack(msg: ConsumeMessage): any {
         this.getChannel().ack(msg);
     }
 
-    private async bindQueue(routintPattern: string): Promise<void> {
-        await this.getChannel().bindQueue(this.queueName, this.exchangeName, routintPattern);
+    // Binds the queue to exchange.
+    private async bindQueue(routingPattern: string): Promise<void> {
+        await this.getChannel().bindQueue(this.queueName, this.exchangeName, routingPattern);
     }
 
+    // Asserts that if the queue is there or not.
     private async assertQueue(): Promise<void> {
         await this.getChannel().assertQueue(this.queueName, { durable: true });
     }
 
+    // Asserts that if the exchange is there or not.
     private async assertExchange(): Promise<void> {
         await this.getChannel().assertExchange(this.exchangeName, this.exchangeType, { durable: true });
     }

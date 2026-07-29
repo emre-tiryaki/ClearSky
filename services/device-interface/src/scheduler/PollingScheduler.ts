@@ -32,7 +32,6 @@ export class PollingScheduler {
 
         let nextInterval = this.intervalMs;
 
-        // TODO: make this something professional.
         try {
             const result = await this.task();
             if (typeof result === 'number') {

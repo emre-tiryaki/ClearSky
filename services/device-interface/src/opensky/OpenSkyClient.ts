@@ -17,7 +17,6 @@ const STATE_VECTOR_INDEX = {
 
 // Thrown when the OpenSky API responds with HTTP 429 (Too Many Requests).
 export class OpenSkyRateLimitError extends Error {
-  // Thrown when the OpenSky API asks the client to slow down and retry later.
   constructor(public readonly retryAfterSeconds: number) {
     super(`OpenSky rate limit exceeded, retry after ${retryAfterSeconds}s`);
     this.name = 'OpenSkyRateLimitError';

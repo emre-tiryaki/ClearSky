@@ -11,6 +11,7 @@ export class StatusPublisher implements AmqpPublisher<SystemStatus> {
         private readonly exchange: string
     ) {}
 
+    // Sends status of the service to the broker
     async publish(status: SystemStatus): Promise<void> {
         this.connectionManager.publishJson(
             this.exchange,

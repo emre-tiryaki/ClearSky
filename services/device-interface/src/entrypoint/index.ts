@@ -8,9 +8,6 @@ import { OpenSkyClient, OpenSkyRateLimitError } from "../opensky/OpenSkyClient.j
 import { OpenSkyAuthError, OpenSkyTokenManager } from "../opensky/OpenSkyTokenManager.js";
 import { PollingScheduler } from "../scheduler/PollingScheduler.js";
 
-// Device-interface service entry point.
-// Wires OpenSky client → normalizer → AMQP publishers, then starts the polling loop.
-// Publishes a status event only when the status type changes (OK / RATE_LIMITED / AUTH_ERROR).
 async function main(): Promise<void> {
 	const config = loadConfig();
 

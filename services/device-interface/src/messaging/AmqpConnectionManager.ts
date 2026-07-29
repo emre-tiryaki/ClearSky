@@ -49,9 +49,14 @@ export class AmqpConnectionManager {
     
     // Declares the exchange used for publishing messages.
     async assertExchange(): Promise<void> {
-        await this.getChannel().assertExchange(this.exchangeName, this.exchangeType, {durable: true});
+        await this.getChannel().assertExchange(
+            this.exchangeName, 
+            this.exchangeType, 
+            {durable: true}
+        );
     }
 
+    // Schedules a connection when the connection is lost for some reason.
     private async scheduleReconnect(): Promise<void> {
         if (this.reconnecting) return;
 

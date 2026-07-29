@@ -1,3 +1,4 @@
+// GraphQl schemas
 export const typeDefs = `
     type FlightPosition {
         icao24: String!
