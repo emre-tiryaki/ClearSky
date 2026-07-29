@@ -13,6 +13,7 @@ export interface FlightRecordDocument {
     recordedAt: Date;
     savedAt: Date;
     note: string | null;
+    category: number;
 }
 
 export interface SavedFlightRecord extends FlightRecordDocument {

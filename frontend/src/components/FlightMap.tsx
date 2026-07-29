@@ -10,6 +10,7 @@ import { SaveFlightPanel } from "./SaveFlightPanel";
 import { useFlightHistory } from "../hooks/useFlightHistory";
 import { FlightHistoryRoute } from "./FlightHistoryRoute";
 import { MapViewportSync } from "./MapViewportSync";
+import { getCategoryName } from "../utils/categoryMapper";
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
@@ -19,30 +20,6 @@ interface FlightMapProps {
 
 const TURKEY_CENTER: [number, number] = [39.0, 35.0];
 const DEFAULT_ZOOM = 6;
-
-function getCategoryName(category: number): string {
-    switch (category) {
-        case 1: return "No info (ADS-B)";
-        case 2: return "Light Aircraft (< 15.500 lb)";
-        case 3: return "Little Aircraft (15.500 - 75.000 lb)";
-        case 4: return "Big Aircraft (75.000 - 300.000 lb)";
-        case 5: return "Big Aircraft (Powerful Swirl / B-757)";
-        case 6: return "Heavy Aircraft (> 300.000 lb)";
-        case 7: return "High Performance";
-        case 8: return "Helicopter";
-        case 9: return "Glider";
-        case 10: return "Lighter-than-Air Vehicle (Balloon/Airship)";
-        case 11: return "Parachutist";
-        case 12: return "Ultralight / ParaGliding";
-        case 14: return "Unmanned Aerial Vehicle (UAV/Drone)";
-        case 15: return "Spacecraft";
-        case 16: return "Emergency Location Vehicle";
-        case 17: return "Service Location Vehicle";
-        case 0:
-        default:
-            return "Unknown";
-    }
-}
 
 export function FlightMap({ flights, trails, onBoundsChange }: FlightMapProps) {
     const [selectedIcao24, setSelectedIcao24] = useState<string | null>(null);

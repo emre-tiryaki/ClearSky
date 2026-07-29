@@ -38,6 +38,7 @@ export const FLIGHT_RECORDS_QUERY = `
       velocity
       recordedAt
       note
+      category
     }
   }
 `;

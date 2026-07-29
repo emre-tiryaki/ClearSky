@@ -41,6 +41,7 @@ export const typeDefs = `
         recordedAt: String!
         savedAt: String!
         note: String
+        category: Int!
     }
 
     input SaveFlightRecordInput {

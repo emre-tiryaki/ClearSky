@@ -77,7 +77,8 @@ export function createResolvers(deps: ResolverDependencies) {
             latitude: (parent: SavedFlightRecord) => parent.position.lat,
             longitude: (parent: SavedFlightRecord) => parent.position.lon,
             recordedAt: (parent: SavedFlightRecord) => parent.recordedAt.toISOString(),
-            savedAt: (parent: SavedFlightRecord) => parent.savedAt.toISOString()
+            savedAt: (parent: SavedFlightRecord) => parent.savedAt.toISOString(),
+            category: (parent: SavedFlightRecord) => parent.category
         }
     }
 }

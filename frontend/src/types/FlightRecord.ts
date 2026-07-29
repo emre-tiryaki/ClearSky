@@ -12,4 +12,5 @@ export interface FlightRecord {
     recordedAt: string;
     savedAt: string;
     note: string | null;
+    category: number;
 }

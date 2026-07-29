@@ -27,6 +27,7 @@ export class FlightRepository {
             recordedAt: position.timestamp,
             savedAt: new Date(),
             note: note ?? null,
+            category: position.category
         };
 
         const result = await this.collection.insertOne(document);
