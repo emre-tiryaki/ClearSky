@@ -24,7 +24,7 @@ export function SaveFlightPanel({flight, saving, error, onSave, onClose}: SaveFl
             <dl className="mt-2 text-sm text-slate-600">
                 <div>ICAO24 {flight.icao24}</div>
                 <div>Altitude: {flight.altitude != null ? `${Math.round(flight.altitude)} m`:"-"}</div>
-                <div>Speed: {flight.speed != null ? `${Math.round(flight.speed) * 3.6} km/h`:"-"}</div>
+                <div>Speed: {flight.speed != null ? `${Math.round(flight.speed * 3.6)} km/h`:"-"}</div>
             </dl>
 
             <textarea
