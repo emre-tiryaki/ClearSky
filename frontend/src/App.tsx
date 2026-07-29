@@ -5,6 +5,7 @@ import { FlightMap } from "./components/FlightMap";
 import { useSystemStatus } from "./hooks/useSystemStatus";
 import { StatusBanner } from "./components/StatusBanner";
 import { ReportPage } from "./pages/ReportPage";
+import { ProjectScopeTooltip } from "./components/ProjectScopeTooltip";
 
 const TURKEY_BBOX: BoundingBox = {
     lamin: 34.0,
@@ -29,21 +30,25 @@ function App() {
 
     return (
         <div className="h-screen w-screen flex flex-col">
-            <header className="bg-slate-900 text-white px-4 py-2 flex items-center justify-between">
+            <header className="relative z-1000 bg-slate-900 text-white px-4 py-2 flex items-center justify-between">
                 <h1 className="text-lg font-semibold">
                     Clear Sky &mdash; Live Flight Dashboard
                 </h1>
                 <span className="text-sm text-slate-300">
                     {flights.size > 0 ? `${flights.size}`: "No"} planes are showing
                 </span>
-                <button
-                    onClick={() =>
-                        setView((v) => (v === "map" ? "report" : "map"))
-                    }
-                    className="text-sm underline"
-                >
-                    {view === "map" ? "Report Page" : "Map Page"}
-                </button>
+                <div className="flex items-center gap-4">
+                    <ProjectScopeTooltip />
+
+                    <button
+                        onClick={() =>
+                            setView((v) => (v === "map" ? "report" : "map"))
+                        }
+                        className="text-sm underline"
+                    >
+                        {view === "map" ? "Report Page" : "Map Page"}
+                    </button>
+                </div>
             </header>
             <StatusBanner status={systemStatus} />
             <main className="flex-1">
