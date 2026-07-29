@@ -1,3 +1,4 @@
+// Client-side flight record shape matching the GraphQL FlightRecord type.
 export interface FlightRecord {
     id: string;
     icao24: string;

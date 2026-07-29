@@ -7,6 +7,7 @@ interface SaveFlightRecordResult {
     saveFlightRecord: FlightRecord;
 }
 
+// Provides a `save` callback that persists the current live position as a flight record.
 export function useSaveFlightRecord() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);

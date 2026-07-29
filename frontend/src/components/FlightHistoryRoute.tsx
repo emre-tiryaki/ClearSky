@@ -6,6 +6,8 @@ interface FlightHistoryRouteProps {
     records: FlightRecord[];
 }
 
+// Renders historical flight path as a dashed, speed-colored polyline
+// using persisted FlightRecord data fetched from the database.
 export function FlightHistoryRoute({records}: FlightHistoryRouteProps) {
     if (records.length < 2) return null;
 

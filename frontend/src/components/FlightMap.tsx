@@ -21,6 +21,8 @@ interface FlightMapProps {
 const TURKEY_CENTER: [number, number] = [39.0, 35.0];
 const DEFAULT_ZOOM = 6;
 
+// Full-screen Leaflet map that renders aircraft markers with heading-rotated icons,
+// live trail polylines, historical route overlays, and a save-flight side panel.
 export function FlightMap({ flights, trails, onBoundsChange }: FlightMapProps) {
     const [selectedIcao24, setSelectedIcao24] = useState<string | null>(null);
     const selectedTrail = selectedIcao24

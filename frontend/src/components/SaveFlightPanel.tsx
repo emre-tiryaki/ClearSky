@@ -9,6 +9,7 @@ interface SaveFlightPanelProps {
     onClose: () => void;
 }
 
+// Floating panel that shows selected aircraft details and lets the user save it with an optional note.
 export function SaveFlightPanel({flight, saving, error, onSave, onClose}: SaveFlightPanelProps) {
     const [note, setNote] = useState("");
 

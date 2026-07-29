@@ -1,3 +1,4 @@
+// Maps an OpenSky aircraft category code to a human-readable label.
 export function getCategoryName(category: number | null | undefined): string {
     if (category == null) return "Bilinmiyor";
     

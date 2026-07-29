@@ -11,6 +11,9 @@ interface TrackedFlight {
     lastSeen: number;
 }
 
+// Subscribes to real-time flight positions via GraphQL WebSocket and returns
+// a Map of currently visible aircraft. Entries unseen for STALE_THRESHOLD_MS
+// are pruned every PRUNE_INTERVAL_MS to remove disappeared flights.
 export function useLiveFlights(bbox: BoundingBox): Map<string, FlightPosition> {
     const { lamin, lomin, lamax, lomax } = bbox;
     
@@ -62,8 +65,8 @@ export function useLiveFlights(bbox: BoundingBox): Map<string, FlightPosition> {
         };
     }, [lamin, lomin, lamax, lomax]);
 
-    // Hook'un disina sadece FlightPosition sizdiriliyor; lastSeen tamamen
-    // ic detay, tuketen tarafin bilmesine gerek yok.
+    // Only FlightPosition is exposed outside the hook; lastSeen is an
+    // internal detail that consumers don't need to know about.
     const flights = new Map<string, FlightPosition>();
     for (const [icao24, entry] of tracked) {
         flights.set(icao24, entry.position);

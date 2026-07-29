@@ -1,6 +1,8 @@
 const SLOW_COLOR: [number, number, number] = [37, 99, 235];
 const FAST_COLOR: [number, number, number] = [220, 38, 38];
 
+// Linearly interpolates between blue (slow) and red (fast) based on the
+// normalized speed value `t` (0 = slowest, 1 = fastest in the current set).
 export function speedToColor(t: number): string {
     const clamped = Math.min(1, Math.max(0, t));
     const r = Math.round(SLOW_COLOR[0] + (FAST_COLOR[0] - SLOW_COLOR[0]) * clamped);

@@ -3,6 +3,7 @@ import * as L from "leaflet";
 const ROUND_STEP = 5;
 const iconCache = new Map<string, L.DivIcon>();
 
+// Returns an SVG path string matching the aircraft category (helicopter, heavy, drone, etc.).
 function getCategoryPath(category: number): string {
     switch(category) {
         case 8: // Helicopter
@@ -18,6 +19,8 @@ function getCategoryPath(category: number): string {
     }
 }
 
+// Computes a dynamic HSL color based on altitude and speed.
+// Grounded aircraft are grey; airborne ones shift from red (low) to blue (high altitude).
 function getDynamicColor(onGround: boolean, altitude: number | null, speed: number | null): string {
     if (onGround) return "#9ca3af"; // Gri
 
@@ -40,6 +43,8 @@ function planeSvg(rotation: number, color: string, path: string): string {
     `;
 }
 
+// Builds and caches a Leaflet DivIcon with a rotated, color-coded plane SVG.
+// Values are rounded to reduce cache entries and avoid excessive DOM re-creation.
 export function getPlaneIcon(heading: number | null, onGround: boolean, category: number, altitude: number | null, speed: number | null): L.DivIcon {
     const roundedHeading = Math.round((heading ?? 0) / ROUND_STEP) * ROUND_STEP;
     const roundedAlt = Math.round((altitude || 0) / 500) * 500;

@@ -6,6 +6,8 @@ interface FlightTrailProps {
     points: TrailPoint[]
 }
 
+// Renders a speed-colored polyline trail for the currently selected aircraft.
+// Each segment is colored on a blue-to-red gradient based on relative speed.
 export function FlightTrail({points}: FlightTrailProps) {
     if (points.length < 2) return null;
 

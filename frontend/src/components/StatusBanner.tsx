@@ -4,6 +4,7 @@ interface StatusBannerProps {
     status: SystemStatus | null;
 }
 
+// Amber warning bar shown only when the backend reports a RATE_LIMITED status.
 export function StatusBanner({ status }: StatusBannerProps) {
   if (!status || status.type !== "RATE_LIMITED") return null;
 

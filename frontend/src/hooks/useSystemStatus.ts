@@ -3,6 +3,7 @@ import type { SystemStatus } from "../types/SystemStatus";
 import { getGraphQlWsClient } from "../graphql/client";
 import { SYSTEM_STATUS_SUBSCRIPTION } from "../graphql/queries";
 
+// Subscribes to the systemStatus GraphQL subscription and returns the latest status, or null.
 export function useSystemStatus(): SystemStatus | null {
     const [status, setStatus] = useState<SystemStatus | null>(null);
 

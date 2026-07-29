@@ -7,6 +7,7 @@ interface FlightHistoryResult {
     flightHistory: FlightRecord[];
 }
 
+// Fetches persisted position history for a single aircraft by icao24 code.
 export function useFlightHistory() {
     const [history, setHistory] = useState<FlightRecord[]>([]);
     const [loading, setLoading] = useState(false);

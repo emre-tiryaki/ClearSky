@@ -3,6 +3,7 @@ import { loadConfig } from "../config/env";
 
 let client: Client | null = null;
 
+// Returns a singleton graphql-ws Client, created lazily on first call.
 export function getGraphQlWsClient(): Client {
     if (!client) {
         const { graphqlWsUrl } = loadConfig();

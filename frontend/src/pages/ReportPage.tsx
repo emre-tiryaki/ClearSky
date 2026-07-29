@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useFlightRecords } from "../hooks/useFlightRecords";
 import { getCategoryName } from "../utils/categoryMapper";
 
+// Page that lets the user query saved flight records by date range and displays them in a table.
 export function ReportPage() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");

@@ -16,6 +16,8 @@ function boundsToBBox(bounds: LatLngBounds): BoundingBox {
     };
 }
 
+// Invisible helper component that reports the map's bounding box
+// on initial mount and after every pan/zoom event.
 export function MapViewportSync({onBoundsChange}: MapViewportSyncProps) {
     const map = useMap();
 

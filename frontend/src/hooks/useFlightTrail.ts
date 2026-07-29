@@ -4,6 +4,9 @@ import type { TrailPoint } from "../types/trail";
 
 const MAX_TRAIL_POINTS = 50;
 
+// Accumulates up to MAX_TRAIL_POINTS recent coordinates per aircraft
+// so the map can render a speed-colored trailing polyline behind each plane.
+// Deduplicates by timestamp and cleans up trails for vanished flights.
 export function useFlightTrail(
     flights: Map<string, FlightPosition>
 ): Map<string, TrailPoint[]> {

@@ -1,8 +1,10 @@
+// Typed response envelope for GraphQL HTTP calls.
 interface GraphQLResponse<T> {
     data?: T;
     errors?: { message: string }[];
 }
 
+// Executes a GraphQL query or mutation over HTTP and returns the typed data payload.
 export async function executeGraphQLOperation<T>(
     query:string,
     variables: Record<string, unknown>,

@@ -7,6 +7,7 @@ interface FlightRecordsResult {
     flightRecords: FlightRecord[]
 }
 
+// Response shape from the flightRecords GraphQL query.
 export function useFlightRecords() {
     const [records, setRecords] = useState<FlightRecord[]>([]);
     const [loading, setLoading] = useState(false);

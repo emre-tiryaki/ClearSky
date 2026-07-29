@@ -1,3 +1,4 @@
+// Vite environment variables consumed by the frontend at build time.
 export interface FrontendConfig {
     graphqlWsUrl: string;
     graphqlHttpUrl: string;
