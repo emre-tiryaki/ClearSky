@@ -3,7 +3,7 @@ import { LIVE_FLIGHTS_TOPIC } from "../../messaging/FlightMessageHandler.js";
 import type { BoundingBox, FlightPosition, SavedFlightRecord, SystemStatus } from "../../../../../shared/index.js";
 import { filterByBoundingBox } from "../filterByBoundingBox.js";
 import { SYSTEM_STATUS_TOPIC } from "../../messaging/SystemStatusMessageHandler.js";
-import { withInitialValue } from "../withInıtialValue.js";
+import { withInitialValue, withInitialValues } from "../withInıtialValue.js";
 import { systemStatusStore } from "../../messaging/SystemStatusStore.js";
 import { GraphQLError } from "graphql"
 import { FlightRepository } from "../../persistence/FlightRepository.js";
@@ -58,7 +58,11 @@ export function createResolvers(deps: ResolverDependencies) {
             liveFlights: {
                 subscribe: async (_root: unknown, args: { bbox: BoundingBox }, context: MercuriusContext) => {
                     const source = await context.pubsub.subscribe(LIVE_FLIGHTS_TOPIC) as AsyncIterableIterator<FlightPosition>;
-                    return filterByBoundingBox(source, args.bbox);
+                    const filteredSource = filterByBoundingBox(source, args.bbox);
+
+                    const initials = deps.liveFlightStore.getInBboxWithHistory(args.bbox);
+
+                    return withInitialValues(initials, filteredSource);
                 },
                 resolve: (payload: FlightPosition) => payload,
             },

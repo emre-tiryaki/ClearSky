@@ -2,54 +2,83 @@ import { useEffect, useState } from "react";
 import { getGraphQlWsClient } from "../graphql/client";
 import { LIVE_FLIGHTS_SUBSCRIPTION } from "../graphql/subscriptions";
 import type { BoundingBox, FlightPosition } from "../types/flight";
+import type { TrailPoint } from "../types/trail";
 
 const STALE_THRESHOLD_MS = 60_000;
 const PRUNE_INTERVAL_MS = 10_000;
+const MAX_TRAIL_POINTS = 50;
 
 interface TrackedFlight {
     position: FlightPosition;
+    trail: TrailPoint[];
     lastSeen: number;
 }
 
-// Subscribes to real-time flight positions via GraphQL WebSocket and returns
-// a Map of currently visible aircraft. Entries unseen for STALE_THRESHOLD_MS
-// are pruned every PRUNE_INTERVAL_MS to remove disappeared flights.
-export function useLiveFlights(bbox: BoundingBox): Map<string, FlightPosition> {
+export function useLiveFlights(bbox: BoundingBox): {
+    flights: Map<string, FlightPosition>;
+    trails: Map<string, TrailPoint[]>;
+} {
     const { lamin, lomin, lamax, lomax } = bbox;
-    
     const [tracked, setTracked] = useState<Map<string, TrackedFlight>>(new Map());
-    
+
     useEffect(() => {
         const client = getGraphQlWsClient();
         const currentBbox: BoundingBox = { lamin, lomin, lamax, lomax };
-        
-        // Buffer for incoming flights
         let buffer: FlightPosition[] = [];
 
         const unsubscribe = client.subscribe<{ liveFlights: FlightPosition }>(
             { query: LIVE_FLIGHTS_SUBSCRIPTION, variables: { bbox: currentBbox } },
             {
                 next: ({ data }) => {
-                    const position = data?.liveFlights;
-                    if (position) buffer.push(position);
+                    if (data?.liveFlights) buffer.push(data.liveFlights);
                 },
-                error: err => console.error("liveFlights subscription hatasi", err),
-                complete: () => console.warn("liveFlights subscription tamamlandi"),
+                error: err => console.error("liveFlights hatasi", err),
+                complete: () => console.warn("liveFlights tamamlandi"),
             },
         );
 
-        // Batch update state every 500ms
         const flushTimer = setInterval(() => {
             if (buffer.length === 0) return;
-            
             const batch = buffer;
-            buffer = []; // clear buffer
+            buffer = [];
 
             setTracked(prev => {
                 const next = new Map(prev);
                 const now = Date.now();
-                for (const position of batch) {
-                    next.set(position.icao24, { position, lastSeen: now });
+                
+                // Uçaklara göre gelen verileri grupla (geçmiş verilerin ezilmemesi için)
+                const grouped = new Map<string, FlightPosition[]>();
+                for (const pos of batch) {
+                    if (!grouped.has(pos.icao24)) grouped.set(pos.icao24, []);
+                    grouped.get(pos.icao24)!.push(pos);
+                }
+
+                for (const [icao24, positions] of grouped) {
+                    const latest = positions[positions.length - 1];
+                    const existing = next.get(icao24);
+                    
+                    // Yeni gelen pozisyonları trail formatına dönüştür
+                    const newTrailPoints = positions.map(p => ({
+                        lat: p.latitude,
+                        lon: p.longitude,
+                        speed: p.speed,
+                        timestamp: p.timestamp
+                    }));
+
+                    // Varsa eskinin üstüne ekle
+                    const combinedTrail = existing ? [...existing.trail, ...newTrailPoints] : newTrailPoints;
+                    
+                    // Mükerrer olanları (aynı timestamp) filtrele ve tarihe göre sırala
+                    const uniqueTrails = new Map(combinedTrail.map(t => [t.timestamp, t]));
+                    let finalTrail = Array.from(uniqueTrails.values())
+                        .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+                    
+                    // Limiti aşarsa en eskileri sil
+                    if (finalTrail.length > MAX_TRAIL_POINTS) {
+                        finalTrail = finalTrail.slice(-MAX_TRAIL_POINTS);
+                    }
+
+                    next.set(icao24, { position: latest, trail: finalTrail, lastSeen: now });
                 }
                 return next;
             });
@@ -57,18 +86,15 @@ export function useLiveFlights(bbox: BoundingBox): Map<string, FlightPosition> {
 
         const pruneTimer = setInterval(() => {
             const now = Date.now();
-
             setTracked(prev => {
                 let changed = false;
                 const next = new Map(prev);
-
                 for (const [icao24, entry] of prev.entries()) {
                     if (now - entry.lastSeen > STALE_THRESHOLD_MS) {
                         next.delete(icao24);
                         changed = true;
                     }
                 }
-
                 return changed ? next : prev;
             });
         }, PRUNE_INTERVAL_MS);
@@ -80,11 +106,12 @@ export function useLiveFlights(bbox: BoundingBox): Map<string, FlightPosition> {
         };
     }, [lamin, lomin, lamax, lomax]);
 
-    // Only FlightPosition is exposed outside the hook; lastSeen is an
-    // internal detail that consumers don't need to know about.
+    // Bileşenlere kullanımı kolay Map'ler halinde ver
     const flights = new Map<string, FlightPosition>();
+    const trails = new Map<string, TrailPoint[]>();
     for (const [icao24, entry] of tracked) {
         flights.set(icao24, entry.position);
+        trails.set(icao24, entry.trail);
     }
-    return flights;
+    return { flights, trails };
 }

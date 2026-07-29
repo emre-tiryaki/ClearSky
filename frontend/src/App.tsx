@@ -24,7 +24,7 @@ function App() {
         debounceRef.current = setTimeout(() => setBbox(next), BBOX_DEBOUNCE_MS);
     }, []);
 
-    const flights = useLiveFlights(bbox);
+    const {flights, trails} = useLiveFlights(bbox);
     const systemStatus = useSystemStatus();
     const [view, setView] = useState<"map" | "report">("map");
 
@@ -55,6 +55,7 @@ function App() {
                 {view === "map" ? (
                     <FlightMap
                         flights={flights}
+                        trails={trails}
                         bbox={bbox}
                         onBoundsChange={handleBounceChange}
                     />

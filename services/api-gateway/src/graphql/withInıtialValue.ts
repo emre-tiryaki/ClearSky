@@ -10,3 +10,15 @@ export async function* withInitialValue<T>(
     for await (const value of source)
         yield value;
 }
+
+// used so the flights immediately sent to subscribers.
+export async function* withInitialValues<T>(
+    initials: T[],
+    source: AsyncIterableIterator<T>,
+): AsyncGenerator<T> {
+    for (const initial of initials)
+        yield initial;
+
+    for await (const value of source)
+        yield value;
+}

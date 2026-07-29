@@ -4,16 +4,18 @@ import { getPlaneIcon } from "./FlightMarkerIcon";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { FlightTrail } from "./FlightTrail";
-import { useFlightTrail } from "../hooks/useFlightTrail";
+
 import { useSaveFlightRecord } from "../hooks/useSaveFlightRecord";
 import { SaveFlightPanel } from "./SaveFlightPanel";
 import { useFlightHistory } from "../hooks/useFlightHistory";
 import { FlightHistoryRoute } from "./FlightHistoryRoute";
 import { MapViewportSync } from "./MapViewportSync";
 import { getCategoryName } from "../utils/categoryMapper";
+import type { TrailPoint } from "../types/trail";
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
+    trails: Map<string, TrailPoint[]>;
     bbox: BoundingBox;
     onBoundsChange: (bbox: BoundingBox) => void;
 }
@@ -23,17 +25,12 @@ const DEFAULT_ZOOM = 6;
 
 // Full-screen Leaflet map that renders aircraft markers with heading-rotated icons,
 // live trail polylines, historical route overlays, and a save-flight side panel.
-export function FlightMap({ flights, bbox, onBoundsChange }: FlightMapProps) {
+export function FlightMap({ flights, trails, bbox, onBoundsChange }: FlightMapProps) {
     const [selectedIcao24, setSelectedIcao24] = useState<string | null>(null);
     const selectedFlight = selectedIcao24
         ? (flights.get(selectedIcao24) ?? null)
         : null;
 
-    const trackedForTrail = new Map();
-    if (selectedIcao24 && selectedFlight) {
-        trackedForTrail.set(selectedIcao24, selectedFlight);
-    }
-    const trails = useFlightTrail(trackedForTrail);
     const selectedTrail = selectedIcao24 ? (trails.get(selectedIcao24) ?? []) : [];
 
     const { save, saving, error } = useSaveFlightRecord();
