@@ -1,9 +1,10 @@
 import type { SystemStatus } from "../../../../shared/index.js";
 import type { AmqpConnectionManager } from "./AmqpConnectionManager.js";
+import type { AmqpPublisher } from "./AmqpPublisher.js";
 
 const STATUS_ROUTING_KEY = "system.status";
 
-export class StatusPublisher {
+export class StatusPublisher implements AmqpPublisher<SystemStatus> {
     constructor(
         private readonly connectionManager: AmqpConnectionManager,
         private readonly exchange: string

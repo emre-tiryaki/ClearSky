@@ -1,8 +1,9 @@
 import type { FlightPosition } from "../../../../shared/index.js";
 import type { AmqpConnectionManager } from "./AmqpConnectionManager.js";
+import type { AmqpPublisher } from "./AmqpPublisher.js";
 
 // Publishes normalized flight positions to the configured AMQP exchange.
-export class FlightPublisher {
+export class FlightPublisher implements AmqpPublisher<FlightPosition[]>{
     constructor(
         private readonly connectionManager: AmqpConnectionManager,
         private readonly exchange: string
@@ -13,7 +14,7 @@ export class FlightPublisher {
         const channel = this.connectionManager.getChannel();
 
         for(const position of positions) {
-            const routingKey = this.buildingRoutingKey(position.icao24);
+            const routingKey = this.buildRoutingKey(position.icao24);
             channel.publish(this.exchange, routingKey, Buffer.from(
                 JSON.stringify(position)
             ), {
@@ -24,7 +25,7 @@ export class FlightPublisher {
     }
 
     // Builds the AMQP routing key used to route a flight position message.
-    buildingRoutingKey(icao24: string): string {
+    buildRoutingKey(icao24: string): string {
         return `flight.position.${icao24}`;
     }
 }

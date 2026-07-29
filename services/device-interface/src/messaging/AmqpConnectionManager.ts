@@ -1,5 +1,4 @@
 import amqplib, { type Channel } from "amqplib";
-import { resolve } from "node:dns";
 
 // Manages the AMQP connection and channel lifecycle for the service.
 export class AmqpConnectionManager {
@@ -33,9 +32,18 @@ export class AmqpConnectionManager {
     // Returns the active AMQP channel after connect() has been called.
     getChannel(): Channel {
         if (!this.channel)
-            throw new Error("AmqbConnectionManager: cant use getChannel before connect()");
+            throw new Error("AmqpConnectionManager: cant use getChannel before connect()");
         
         return this.channel;
+    }
+
+    publishJson(exchange: string, routingKey: string, payload: unknown, persistent = true): void {
+        this.getChannel().publish(
+            exchange,
+            routingKey,
+            Buffer.from(JSON.stringify(payload)),
+            { contentType: 'application/json', persistent }
+        );
     }
     
     // Declares the exchange used for publishing messages.
