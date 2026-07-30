@@ -10,6 +10,7 @@ export class FlightRepository {
     constructor(db: Db) {
         this.collection = db.collection<FlightRecordDocument>(COLLECTION_NAME);
         void this.collection.createIndex({ icao24: 1, recordedAt: 1 });
+        void this.collection.createIndex({ recordedAt: 1 });
     }
 
     async save(position: FlightPosition, note?: string): Promise<SavedFlightRecord> {
