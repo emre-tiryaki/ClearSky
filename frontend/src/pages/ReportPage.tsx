@@ -12,18 +12,16 @@ export function ReportPage() {
         <div className="min-h-screen p-8 bg-slate-50 text-slate-800">
             <div className="max-w-6xl mx-auto space-y-6">
                 
-                {/* 1. Başlık Alanı */}
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Uçuş Raporları</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Flight Reports</h1>
                     <p className="mt-2 text-sm text-slate-500">
-                        Belirtilen tarih aralığındaki kaydedilmiş uçuş verilerini listeleyin.
+                        List the flights in the given time interval.
                     </p>
                 </div>
 
-                {/* 2. Filtreleme Kartı */}
                 <div className="p-5 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-wrap gap-4 items-end">
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-sm font-medium text-slate-600">Başlangıç Tarihi</label>
+                        <label className="text-sm font-medium text-slate-600">Start Date</label>
                         <input
                             type="date"
                             value={startDate}
@@ -32,7 +30,7 @@ export function ReportPage() {
                         />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-sm font-medium text-slate-600">Bitiş Tarihi</label>
+                        <label className="text-sm font-medium text-slate-600">End Date</label>
                         <input
                             type="date"
                             value={endDate}
@@ -50,21 +48,18 @@ export function ReportPage() {
                         disabled={loading || !startDate || !endDate}
                         className="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {loading ? "Yükleniyor..." : "Verileri Getir"}
+                        {loading ? "Loading..." : "Fetch Data"}
                     </button>
                 </div>
 
-                {/* 3. Hata Mesajı Görünümü */}
                 {error && (
                     <div className="p-4 text-sm text-red-700 bg-red-50 rounded-lg border border-red-200">
                         {error}
                     </div>
                 )}
 
-                {/* 4. Tablo Kartı */}
                 <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
-                        {/* Tabloya table-fixed ekleyerek ve sütun genişliklerini w- oranlarıyla dağıtarak sağdaki boşluğu önlüyoruz */}
                         <table className="w-full text-sm text-left table-fixed">
                             <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
                                 <tr>
@@ -82,7 +77,7 @@ export function ReportPage() {
                                 {records.length === 0 && !loading ? (
                                     <tr>
                                         <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
-                                            Gösterilecek kayıt bulunamadı. Lütfen bir tarih aralığı seçip arama yapın.
+                                            There are no records in this time interval. Please try again.
                                         </td>
                                     </tr>
                                 ) : (
@@ -98,12 +93,10 @@ export function ReportPage() {
                                             </td>
                                             <td className="px-4 py-4 font-semibold text-blue-700 truncate">{r.callsign ?? "-"}</td>
                                             
-                                            {/* Yeni: Konum Bilgisi */}
                                             <td className="px-4 py-4 text-slate-500 text-xs truncate">
                                                 {r.latitude.toFixed(4)}, {r.longitude.toFixed(4)}
                                             </td>
                                             
-                                            {/* Yeni: Yükseklik Bilgisi */}
                                             <td className="px-4 py-4">
                                                 {r.altitude != null ? (
                                                     <span className="text-slate-600 font-medium">{Math.round(r.altitude)} m</span>
