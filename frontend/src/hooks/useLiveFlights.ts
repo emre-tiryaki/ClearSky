@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getGraphQlWsClient } from "../graphql/client";
 import { LIVE_FLIGHTS_SUBSCRIPTION } from "../graphql/subscriptions";
 import type { BoundingBox, FlightPosition } from "../types/flight";
@@ -63,12 +63,7 @@ export function useLiveFlights(bbox: BoundingBox): {
                         timestamp: p.timestamp
                     }));
 
-                    const combinedTrail = existing ? [...existing.trail, ...newTrailPoints] : newTrailPoints;
-                    
-                    const uniqueTrails = new Map(combinedTrail.map(t => [t.timestamp, t]));
-                    let finalTrail = Array.from(uniqueTrails.values())
-                        .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-                    
+                    let finalTrail = existing ? existing.trail.concat(newTrailPoints) : newTrailPoints;
                     if (finalTrail.length > MAX_TRAIL_POINTS) {
                         finalTrail = finalTrail.slice(-MAX_TRAIL_POINTS);
                     }
@@ -101,11 +96,13 @@ export function useLiveFlights(bbox: BoundingBox): {
         };
     }, [lamin, lomin, lamax, lomax]);
 
-    const flights = new Map<string, FlightPosition>();
-    const trails = new Map<string, TrailPoint[]>();
-    for (const [icao24, entry] of tracked) {
-        flights.set(icao24, entry.position);
-        trails.set(icao24, entry.trail);
-    }
-    return { flights, trails };
+    return useMemo(() => {
+        const flights = new Map<string, FlightPosition>();
+        const trails = new Map<string, TrailPoint[]>();
+        for (const [icao24, entry] of tracked) {
+            flights.set(icao24, entry.position);
+            trails.set(icao24, entry.trail);
+        }
+        return { flights, trails };
+    }, [tracked]);
 }
