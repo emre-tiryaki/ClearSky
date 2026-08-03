@@ -17,12 +17,13 @@ interface FlightMapProps {
     trails: Map<string, TrailPoint[]>;
     bbox: BoundingBox;
     onBoundsChange: (bbox: BoundingBox) => void;
+    onVisibleCountChange?: (count: number) => void;
 }
 
 const TURKEY_CENTER: [number, number] = [39.0, 35.0];
 const DEFAULT_ZOOM = 6;
 
-export function FlightMap({ flights, trails, bbox, onBoundsChange }: FlightMapProps) {
+export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCountChange }: FlightMapProps) {
     const [selectedIcao24, setSelectedIcao24] = useState<string | null>(null);
     const selectedFlight = selectedIcao24 ? (flights.get(selectedIcao24) ?? null) : null;
     const selectedTrail = selectedIcao24 ? (trails.get(selectedIcao24) ?? []) : [];
@@ -40,8 +41,6 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange }: FlightMapPr
         if (selectedIcao24) fetchHistory(selectedIcao24);
     }, [selectedIcao24, fetchHistory]);
 
-    // Referansı sabit tutuyoruz: AircraftMarker'ın memo karşılaştırması
-    // bu prop yüzünden bozulmasın.
     const handleMarkerSelect = useCallback((icao24: string) => {
         setSelectedIcao24(icao24);
     }, []);
@@ -53,6 +52,10 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange }: FlightMapPr
         ),
         [flights, bbox]
     );
+
+    useEffect(() => {
+        onVisibleCountChange?.(visibleFlights.length);
+    }, [visibleFlights, onVisibleCountChange]);
 
     return (
         <div style={{ height: "100%", width: "100%", position: "relative" }}>

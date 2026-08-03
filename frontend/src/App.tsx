@@ -27,6 +27,11 @@ function App() {
     const {flights, trails} = useLiveFlights(bbox);
     const systemStatus = useSystemStatus();
     const [view, setView] = useState<"map" | "report">("map");
+    const [visibleCount, setVisibleCount] = useState(0);
+
+    const handleVisibleCountChange = useCallback((count: number) => {
+        setVisibleCount(count);
+    }, []);
 
     return (
         <div className="h-screen w-screen flex flex-col">
@@ -35,7 +40,9 @@ function App() {
                     Clear Sky &mdash; Live Flight Dashboard
                 </h1>
                 <span className="text-sm text-slate-300">
-                    {flights.size > 0 ? `${flights.size}`: "No"} planes are showing
+                    {view === "map" 
+                        ? (visibleCount > 0 ? `${visibleCount}`: "No") 
+                        : (flights.size > 0 ? `${flights.size}`: "No")} planes are showing
                 </span>
                 <div className="flex items-center gap-4">
                     <ProjectScopeTooltip />
@@ -58,6 +65,7 @@ function App() {
                         trails={trails}
                         bbox={bbox}
                         onBoundsChange={handleBounceChange}
+                        onVisibleCountChange={handleVisibleCountChange}
                     />
                 ) : (
                     <ReportPage />
