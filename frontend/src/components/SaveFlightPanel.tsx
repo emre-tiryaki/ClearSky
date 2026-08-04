@@ -7,14 +7,17 @@ interface SaveFlightPanelProps {
     error: string | null;
     onSave: (note: string) => void;
     onClose: () => void;
+    panelOffset?: number;
 }
 
 // Floating panel that shows selected aircraft details and lets the user save it with an optional note.
-export function SaveFlightPanel({flight, saving, error, onSave, onClose}: SaveFlightPanelProps) {
+export function SaveFlightPanel({flight, saving, error, onSave, onClose, panelOffset = 0}: SaveFlightPanelProps) {
     const [note, setNote] = useState("");
 
     return (
-        <div className="absolute right-4 top-16 w-72 rounded-lg bg-white p-4 shadow-lg z-1000">
+        <div className="absolute right-4 top-16 w-72 rounded-lg bg-white p-4 shadow-lg z-1000"
+            style={{right: `${panelOffset + 16}px`}}
+        >
             <div className="flex items-center justify-between">
                 <h2 className="font-semibold">{flight.callsign?.trim() || flight.icao24}</h2>
                 <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
