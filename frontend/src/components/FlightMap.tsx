@@ -3,7 +3,6 @@ import type { BoundingBox, FlightPosition } from "../types/flight";
 import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlightTrail } from "./FlightTrail";
-import { AircraftMarker } from "./AircraftMarker";
 
 import { useSaveFlightRecord } from "../hooks/useSaveFlightRecord";
 import { SaveFlightPanel } from "./SaveFlightPanel";
@@ -11,6 +10,7 @@ import { useFlightHistory } from "../hooks/useFlightHistory";
 import { FlightHistoryRoute } from "./FlightHistoryRoute";
 import { MapViewportSync } from "./MapViewportSync";
 import type { TrailPoint } from "../types/trail";
+import { AircraftClusterLayer } from "./AircraftClusterLayer";
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
@@ -69,9 +69,7 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
                     attribution="&copy; OpenStreetMap contributors"
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {visibleFlights.map(flight => (
-                    <AircraftMarker key={flight.icao24} flight={flight} onSelect={handleMarkerSelect} />
-                ))}
+                <AircraftClusterLayer flights={visibleFlights} onSelect={handleMarkerSelect}/>
                 <MapViewportSync onBoundsChange={onBoundsChange} />
                 <FlightTrail points={selectedTrail} />
                 <FlightHistoryRoute records={history} />

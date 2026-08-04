@@ -72,7 +72,7 @@ export function useLiveFlights(bbox: BoundingBox): {
                 }
                 return next;
             });
-        }, 500);
+        }, 1500);
 
         const pruneTimer = setInterval(() => {
             const now = Date.now();
