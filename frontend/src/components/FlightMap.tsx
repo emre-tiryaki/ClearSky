@@ -15,6 +15,7 @@ import { AircraftClusterLayer } from "./AircraftClusterLayer";
 import { DEFAULT_FILTERS, type FlightFilters } from "../types/filters";
 import { SearchFilterPanel } from "./SearchFilterPanel";
 import { MapController } from "./MapController";
+import { filterFlights } from "../utils/searchFlight";
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
@@ -67,12 +68,17 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
         setSelectedIcao24(icao24);
     }
 
+    const filteredFlights = useMemo(
+        () => filterFlights(Array.from(flights.values()), filters),
+        [flights, filters]
+    );
+
     const visibleFlights = useMemo(
-        () => Array.from(flights.values()).filter(f =>
+        () => filteredFlights.filter(f =>
             f.latitude >= bbox.lamin && f.latitude <= bbox.lamax &&
             f.longitude >= bbox.lomin && f.longitude <= bbox.lomax
         ),
-        [flights, bbox]
+        [filteredFlights, bbox]
     );
 
     useEffect(() => {

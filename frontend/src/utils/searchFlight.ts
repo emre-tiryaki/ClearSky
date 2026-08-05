@@ -1,4 +1,4 @@
-import type { FlightPosition } from "../../../shared";
+import type { FlightPosition } from "../types/flight";
 import type { FlightFilters } from "../types/filters";
 
 const LEVEL_VERTICAL_RATE_THRESHOLD = 1;
