@@ -8,3 +8,20 @@ export const SAVE_FLIGHT_RECORD_MUTATION = `
     }
   }
 `;
+
+export const BOOKMARK_FLIGHT_MUTATION = `
+  mutation BookmarkFlight($icao24: String!, $callsign: String, $category: Int!) {
+    bookmarkFlight(icao24: $icao24, callsign: $callsign, category: $category) {
+      id
+      icao24
+      callsign
+      category
+      createdAt
+    }
+  }
+`;
+export const REMOVE_BOOKMARK_MUTATION = `
+  mutation RemoveBookmark($icao24: String!) {
+    removeBookmark(icao24: $icao24)
+  }
+`;

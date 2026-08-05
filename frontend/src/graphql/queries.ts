@@ -54,3 +54,15 @@ export const FLIGHT_HISTORY_QUERY = `
     }
   }
 `;
+
+export const BOOKMARKS_QUERY = `
+  query Bookmarks {
+    bookmarks {
+      id
+      icao24
+      callsign
+      category
+      createdAt
+    }
+  }
+`

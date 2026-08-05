@@ -16,6 +16,7 @@ import { DEFAULT_FILTERS, type FlightFilters } from "../types/filters";
 import { SearchFilterPanel } from "./SearchFilterPanel";
 import { MapController } from "./MapController";
 import { filterFlights } from "../utils/searchFlight";
+import { useBookmarks } from "../hooks/useBookmarks";
 
 interface FlightMapProps {
     flights: Map<string, FlightPosition>;
@@ -44,6 +45,7 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
 
     const { save, saving, error } = useSaveFlightRecord();
     const { fetch: fetchHistory, history } = useFlightHistory();
+    const {bookmarks, bookmarkedIcao24s, addBookmark, removeBookmark} = useBookmarks();
 
     const handleSave = async (note: string) => {
         if (!selectedIcao24) return;
@@ -67,6 +69,13 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
         mapInstance.flyTo([flight.latitude, flight.longitude], FLY_TO_ZOOM, {duration:  1});
         setSelectedIcao24(icao24);
     }
+
+    const handleBookmark = useCallback((icao24: string, callsign: string | null, category: number) => {
+        if (bookmarkedIcao24s.has(icao24))
+            void removeBookmark(icao24);
+        else
+            void addBookmark(icao24, callsign, category);
+    }, [bookmarkedIcao24s, addBookmark, removeBookmark]);
 
     const filteredFlights = useMemo(
         () => filterFlights(Array.from(flights.values()), filters),
@@ -97,7 +106,12 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
                     attribution="&copy; OpenStreetMap contributors"
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <AircraftClusterLayer flights={visibleFlights} onSelect={handleMarkerSelect}/>
+                <AircraftClusterLayer 
+                    flights={visibleFlights} 
+                    onSelect={handleMarkerSelect} 
+                    bookmarkedIcao24={bookmarkedIcao24s} 
+                    onBookmark={handleBookmark}
+                />
                 <MapViewportSync onBoundsChange={onBoundsChange} />
                 <MapController onMapReady={setMapInstance}/>
                 <FlightTrail points={selectedTrail} />
@@ -111,6 +125,8 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
                 onSelectFlight={handleFlyToFlight}
                 isOpen={isFilterPanelOpen}
                 onToggle={() => setIsFilterPanelOpen(open => !open)}
+                bookmarks={bookmarks}
+                onRemoveBookmark={icao24 => void removeBookmark(icao24)}
             />
 
             {selectedFlight && (

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { DEFAULT_FILTERS, type FlightFilters, type FlightStatusFilter, type VerticalRateFilter } from "../types/filters";
 import type { FlightPosition } from "../types/flight";
 import { buildCategoryOptions, TYPE_CATEGORY_CODES, WEIGHT_CATEGORY_CODES } from "../utils/categoryGroups";
+import type { Bookmark } from "../types/Bookmark";
 
 interface SearchFilterPanelProps {
     flights: FlightPosition[];
@@ -10,6 +11,8 @@ interface SearchFilterPanelProps {
     onSelectFlight: (icao24: string) => void;
     isOpen: boolean;
     onToggle: () => void;
+    bookmarks: Bookmark[];
+    onRemoveBookmark: (icao24: string) => void;
 }
 
 const MAX_SUGGESTIONS = 8;
@@ -25,6 +28,18 @@ const VERTICAL_RATE_LABELS: Record<VerticalRateFilter, string> = {
     descending: "descending"
 }
 
+// Small inline plane SVG used next to bookmark entries.
+function PlaneIcon({ size = 14 }: { size?: number }) {
+    return (
+        <svg viewBox="0 0 24 24" width={size} height={size} style={{ display: "inline-block", verticalAlign: "middle" }}>
+            <path
+                d="M12 2L15 9L22 12L15 13L14 20L12 17L10 20L9 13L2 12L9 9L12 2Z"
+                fill="#374151"
+            />
+        </svg>
+    );
+}
+
 export function SearchFilterPanel({
     filters,
     flights,
@@ -32,6 +47,8 @@ export function SearchFilterPanel({
     onFiltersChange,
     onSelectFlight,
     onToggle,
+    bookmarks,
+    onRemoveBookmark
 }: SearchFilterPanelProps) {
     const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -73,6 +90,10 @@ export function SearchFilterPanel({
         setShowSuggestions(false);
         update({searchQuery: ""});
     };
+
+    const handleSelectBookmark = (icao24: string) => {
+        onSelectFlight(icao24);
+    }
 
     const activeFilterCount =
         (filters.selectedCategories?.size ?? 0) +
@@ -133,6 +154,43 @@ export function SearchFilterPanel({
                                                     {flight.callsign?.trim() || flight.icao24}
                                                 </span>
                                                 <span className="text-slate-400 ml-2 text-xs">{flight.icao24}</span>
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="text-sm font-medium text-slate-600">
+                                Bookmarks
+                                {bookmarks.length > 0 && (
+                                    <span className="ml-2 text-xs text-slate-400">{bookmarks.length}</span>
+                                )}
+                            </label>
+                            {bookmarks.length === 0 ? (
+                                <p className="mt-1 text-xs text-slate-400">No Bookmarked Aircraft</p>
+                            ): (
+                                <ul className="mt-1 spac-y-1">
+                                    {bookmarks.map(b => (
+                                        <li key={b.icao24} className="flex items-center justify-between rounded border border-slate-200 px-2 py-1.5">
+                                            <button
+                                                onClick={() => handleSelectBookmark(b.icao24)}
+                                                className="flex items-center gap-2 text-sm text-slate-700 hover:text-blue-600 text-left"
+                                            >   
+                                                <PlaneIcon size={14} />
+                                                <span className="font-medium">
+                                                    {b.callsign?.trim() || b.icao24}
+                                                </span>
+                                                <span className="text-slate-400 text-xs">{b.icao24}</span>
+                                            </button>
+                                            <button
+                                                onClick={() => onRemoveBookmark(b.icao24)}
+                                                className="text-slate-400 hover:text-red-500 text-xs px-1"
+
+                                                title="Remove Bookmark"
+                                            >
+                                                Remove
                                             </button>
                                         </li>
                                     ))}

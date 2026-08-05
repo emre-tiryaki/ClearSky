@@ -7,9 +7,11 @@ import type { FlightPosition } from "../types/flight";
 interface AircraftMarkerProps {
     flight: FlightPosition;
     onSelect: (icao24: string) => void;
+    isBookmarked: boolean;
+    onBookmark: (icao24: string, callsign: string | null, category: number) => void;
 }
 
-function AircraftMarkerComponent({flight, onSelect}: AircraftMarkerProps) {
+function AircraftMarkerComponent({flight, onSelect, isBookmarked, onBookmark}: AircraftMarkerProps) {
     return (
         <Marker
             position={[flight.latitude, flight.longitude]}
@@ -36,6 +38,23 @@ function AircraftMarkerComponent({flight, onSelect}: AircraftMarkerProps) {
                     <span style={{ color: "#6b7280", fontSize: "0.8em", marginLeft: "4px" }}>
                         Code: {flight.category}
                     </span>
+                </div>
+                <div style={{marginTop: "8px"}}>
+                    <button 
+                        onClick={() => onBookmark(flight.icao24, flight.callsign, flight.category)}
+                        style={{
+                            padding: "4px 10px",
+                            fontSize: "0.8em",
+                            borderRadius: "4px",
+                            border: "1px solid",
+                            cursor: "pointer",
+                            backgroundColor: isBookmarked ? "#1d4ed8" : "white",
+                            color: isBookmarked ? "white" : "#374151",
+                            borderColor: isBookmarked ? "#1d4ed8" : "#d1d5db",
+                        }}
+                    >
+                        {isBookmarked ? "Bookmarked" : "Bookmark"}
+                    </button>
                 </div>
             </Popup>
         </Marker>

@@ -8,9 +8,11 @@ import { AircraftMarker } from "./AircraftMarker";
 interface AircraftClusterLayerProps {
     flights: FlightPosition[];
     onSelect: (icao24: string) => void;
+    bookmarkedIcao24: Set<string>;
+    onBookmark: (icao24: string, callsign: string | null, category: number) => void;
 }
 
-export function AircraftClusterLayer({flights, onSelect}: AircraftClusterLayerProps) {
+export function AircraftClusterLayer({flights, onSelect, bookmarkedIcao24, onBookmark}: AircraftClusterLayerProps) {
     const groupRef = useRef<L.MarkerClusterGroup | null>(null);
 
     useEffect(() => {
@@ -26,7 +28,13 @@ export function AircraftClusterLayer({flights, onSelect}: AircraftClusterLayerPr
             maxClusterRadius={60}
         >
             {flights.map(flight => (
-                <AircraftMarker key={flight.icao24} flight={flight} onSelect={onSelect}/>
+                <AircraftMarker 
+                key={flight.icao24} 
+                flight={flight} 
+                onSelect={onSelect} 
+                isBookmarked={bookmarkedIcao24.has(flight.icao24)}
+                onBookmark={onBookmark}
+            />
             ))}
         </MarkerClusterGroup>
     )
