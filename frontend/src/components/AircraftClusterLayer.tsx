@@ -10,9 +10,11 @@ interface AircraftClusterLayerProps {
     onSelect: (icao24: string) => void;
     bookmarkedIcao24: Set<string>;
     onBookmark: (icao24: string, callsign: string | null, category: number) => void;
+    watchedIcao24s: Set<string>,
+    onToggleWatch: (icao24: string) => void;
 }
 
-export function AircraftClusterLayer({flights, onSelect, bookmarkedIcao24, onBookmark}: AircraftClusterLayerProps) {
+export function AircraftClusterLayer({flights, onSelect, bookmarkedIcao24, onBookmark, onToggleWatch, watchedIcao24s}: AircraftClusterLayerProps) {
     const groupRef = useRef<L.MarkerClusterGroup | null>(null);
 
     useEffect(() => {
@@ -34,6 +36,8 @@ export function AircraftClusterLayer({flights, onSelect, bookmarkedIcao24, onBoo
                 onSelect={onSelect} 
                 isBookmarked={bookmarkedIcao24.has(flight.icao24)}
                 onBookmark={onBookmark}
+                isWatched={watchedIcao24s.has(flight.icao24)}
+                onToggleWatch={onToggleWatch}
             />
             ))}
         </MarkerClusterGroup>

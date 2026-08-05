@@ -36,6 +36,9 @@ export const FLIGHT_RECORDS_QUERY = `
       longitude
       altitude
       velocity
+      heading
+      verticalRate
+      onGround
       recordedAt
       note
       category

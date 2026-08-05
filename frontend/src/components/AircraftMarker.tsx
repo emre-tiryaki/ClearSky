@@ -9,9 +9,11 @@ interface AircraftMarkerProps {
     onSelect: (icao24: string) => void;
     isBookmarked: boolean;
     onBookmark: (icao24: string, callsign: string | null, category: number) => void;
+    isWatched: boolean;
+    onToggleWatch: (icao24: string) => void;
 }
 
-function AircraftMarkerComponent({flight, onSelect, isBookmarked, onBookmark}: AircraftMarkerProps) {
+function AircraftMarkerComponent({flight, onSelect, isBookmarked, onBookmark, isWatched, onToggleWatch}: AircraftMarkerProps) {
     return (
         <Marker
             position={[flight.latitude, flight.longitude]}
@@ -54,6 +56,21 @@ function AircraftMarkerComponent({flight, onSelect, isBookmarked, onBookmark}: A
                         }}
                     >
                         {isBookmarked ? "Bookmarked" : "Bookmark"}
+                    </button>
+                    <button
+                        onClick={() => onToggleWatch(flight.icao24)}
+                        style={{
+                            padding: "4px 10px",
+                            fontSize: "0.8em",
+                            borderRadius: "4px",
+                            border: "1px solid",
+                            cursor: "pointer",
+                            backgroundColor: isWatched ? "#15803d" : "white",
+                            color: isWatched ? "white" : "#374151",
+                            borderColor: isWatched ? "#15803d" : "#d1d5db",
+                        }}
+                    >
+                        {isWatched ? "Watching" : "Watch"}
                     </button>
                 </div>
             </Popup>
