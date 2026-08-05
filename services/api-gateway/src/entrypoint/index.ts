@@ -11,6 +11,7 @@ import { MongoConnection } from "../persistence/MongoConnection.js";
 import { FlightRepository } from "../persistence/FlightRepository.js";
 import { LiveFlightStore } from "../messaging/LiveFlightStore.js";
 import cors from "@fastify/cors";
+import { BookmarkRepository } from "../persistence/BookmarkRepository.js";
 
 async function main(): Promise<void> {
 	const config = loadConfig();
@@ -21,9 +22,10 @@ async function main(): Promise<void> {
 	const mongoConnection = new MongoConnection(config.mongoUri, config.mongoDbName);
 	const db = await mongoConnection.connect();
 	const flightRepository = new FlightRepository(db);
+	const bookmarkRepository = new BookmarkRepository(db);
 
 	const liveFlightStore = new LiveFlightStore();
-	const resolvers	 = createResolvers({liveFlightStore, flightRepository});
+	const resolvers	 = createResolvers({liveFlightStore, flightRepository, bookmarkRepository});
 
 	await app.register(mercurius, {
 		schema: typeDefs,

@@ -1,6 +1,6 @@
 import type { PubSub } from "mercurius";
 import { LIVE_FLIGHTS_TOPIC } from "../../messaging/FlightMessageHandler.js";
-import type { BoundingBox, FlightPosition, SavedFlightRecord, SystemStatus } from "../../../../../shared/index.js";
+import type { BoundingBox, FlightPosition, SavedBookmark, SavedFlightRecord, SystemStatus } from "../../../../../shared/index.js";
 import { filterByBoundingBox } from "../filterByBoundingBox.js";
 import { SYSTEM_STATUS_TOPIC } from "../../messaging/SystemStatusMessageHandler.js";
 import { withInitialValue, withInitialValues } from "../withInıtialValue.js";
@@ -8,6 +8,7 @@ import { systemStatusStore } from "../../messaging/SystemStatusStore.js";
 import { GraphQLError } from "graphql"
 import { FlightRepository } from "../../persistence/FlightRepository.js";
 import type { LiveFlightStore } from "../../messaging/LiveFlightStore.js";
+import type { BookmarkRepository } from "../../persistence/BookmarkRepository.js";
 
 // Mercurius context injected into every resolver.
 interface MercuriusContext {
@@ -16,8 +17,9 @@ interface MercuriusContext {
 
 // Dependencies injected into the resolver factory. 
 interface ResolverDependencies {
-    liveFlightStore: LiveFlightStore,
-    flightRepository: FlightRepository
+    liveFlightStore: LiveFlightStore;
+    flightRepository: FlightRepository;
+    bookmarkRepository: BookmarkRepository;
 }
 
 // Creates the GraphQL resolver map.
@@ -29,7 +31,7 @@ export function createResolvers(deps: ResolverDependencies) {
             _health: async () => "ok",
             flightRecords: async (
                 _root: unknown,
-                args: {startDate: string, endDate: string}
+                args: { startDate: string, endDate: string }
             ) => {
                 const start = new Date(args.startDate);
                 const end = new Date(args.endDate);
@@ -38,8 +40,11 @@ export function createResolvers(deps: ResolverDependencies) {
 
                 return deps.flightRepository.findByDateRange(start, end);
             },
-            flightHistory: async (_root: unknown, args: {icao24: string}) => {
+            flightHistory: async (_root: unknown, args: { icao24: string }) => {
                 return deps.flightRepository.findByIcao24(args.icao24);
+            },
+            bookmarks: async () => {
+                return deps.bookmarkRepository.findAll();
             }
         },
         Mutation: {
@@ -53,6 +58,18 @@ export function createResolvers(deps: ResolverDependencies) {
 
                 return deps.flightRepository.save(position, args.input.note);
             },
+            bookmarkFlight: async (
+                _root: unknown,
+                args: { icao24: string, callsign?: string, category: number },
+            ) => {
+                return deps.bookmarkRepository.save(args.icao24, args.callsign ?? null, args.category);
+            },
+            removeBookmark: async (
+                _root: unknown,
+                args: { icao24: string },
+            ) => {
+                return deps.bookmarkRepository.remove(args.icao24);
+            }
         },
         Subscription: {
             liveFlights: {
@@ -87,6 +104,10 @@ export function createResolvers(deps: ResolverDependencies) {
             recordedAt: (parent: SavedFlightRecord) => parent.recordedAt.toISOString(),
             savedAt: (parent: SavedFlightRecord) => parent.savedAt.toISOString(),
             category: (parent: SavedFlightRecord) => parent.category
+        },
+        Bookmark: {
+            id: (parent: SavedBookmark) => parent._id,
+            createdAt: (parent: SavedBookmark) => parent.createdAt.toISOString()
         }
     }
 }

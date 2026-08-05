@@ -1,5 +1,13 @@
 // GraphQl schemas
 export const typeDefs = `
+    type Bookmark {
+        id: ID!
+        icao24: String!
+        callsign: String
+        category: Int!
+        createdAt: String!
+    }
+
     type FlightPosition {
         icao24: String!
         callsign: String
@@ -12,14 +20,14 @@ export const typeDefs = `
         verticalRate: Float
         timestamp: String!
         category: Int!
-    }
+    }    
 
     type SystemStatus {
         type: String!
         message: String!
         retryAfterSeconds: Int
         timestamp: String!
-    }
+    }    
 
     input BoundingBoxInput {
         lamin: Float!
@@ -54,10 +62,13 @@ export const typeDefs = `
         _health: String!
         flightRecords(startDate: String!, endDate: String!): [FlightRecord!]!
         flightHistory(icao24: String!): [FlightRecord!]!
+        bookmarks: [Bookmark!]!
     }
 
     type Mutation {
         saveFlightRecord(input: SaveFlightRecordInput!): FlightRecord!
+        bookmarkFlight(icao24: String!, callsign: String, category: Int!): Bookmark!
+        removeBookmark(icao24: String!): Boolean!
     }
 
     type Subscription {
