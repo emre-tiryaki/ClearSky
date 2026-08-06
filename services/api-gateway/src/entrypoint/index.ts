@@ -12,6 +12,7 @@ import { FlightRepository } from "../persistence/FlightRepository.js";
 import { LiveFlightStore } from "../messaging/LiveFlightStore.js";
 import cors from "@fastify/cors";
 import { BookmarkRepository } from "../persistence/BookmarkRepository.js";
+import { WatchStore } from "../messaging/WatchStore.js";
 
 async function main(): Promise<void> {
 	const config = loadConfig();
@@ -25,7 +26,8 @@ async function main(): Promise<void> {
 	const bookmarkRepository = new BookmarkRepository(db);
 
 	const liveFlightStore = new LiveFlightStore();
-	const resolvers	 = createResolvers({liveFlightStore, flightRepository, bookmarkRepository});
+	const watchStore = new WatchStore();
+	const resolvers	 = createResolvers({liveFlightStore, flightRepository, bookmarkRepository, watchStore});
 
 	await app.register(mercurius, {
 		schema: typeDefs,
@@ -46,7 +48,7 @@ async function main(): Promise<void> {
 	);
 	await consumerManager.connect();
 
-	const messageHandler = new FlightMessageHandler(publisher, liveFlightStore);
+	const messageHandler = new FlightMessageHandler(publisher, liveFlightStore, watchStore, flightRepository);
 	await consumerManager.consume(message => messageHandler.handle(message));
 
 	const statusConsumerManager = new AmqpConsumerManager(

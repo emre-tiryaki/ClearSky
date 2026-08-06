@@ -2,7 +2,7 @@ import { Map as LeafletMap } from "leaflet";
 import { MapContainer, TileLayer } from "react-leaflet";
 import type { BoundingBox, FlightPosition } from "../types/flight";
 import "leaflet/dist/leaflet.css";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FlightTrail } from "./FlightTrail";
 import { useSaveFlightRecord } from "../hooks/useSaveFlightRecord";
 import { SaveFlightPanel } from "./SaveFlightPanel";
@@ -18,6 +18,7 @@ import { filterFlights } from "../utils/searchFlight";
 import { useBookmarks } from "../hooks/useBookmarks";
 import { useWatchedFlights } from "../hooks/useWatchedFlights";
 import { WatchedFlightsPanel } from "./WatchedFlightsPanel";
+import { RecordedRoutes } from "./RecordedRoutes";
 import type { FlightRecord } from "../types/FlightRecord";
 
 interface FlightMapProps {
@@ -90,24 +91,8 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
         loadingRecords,
         toggleWatch,
         stopWatching,
-        savePosition,
         fetchRecords,
     } = useWatchedFlights();
-
-    // Auto-save: fires whenever `flights` updates.
-    // Saves a position only when the aircraft's timestamp actually changed.
-    const lastSavedTimestamp = useRef<Map<string, string>>(new Map());
-    useEffect(() => {
-        if (watchedIcao24s.size === 0) return;
-        for (const icao24 of watchedIcao24s) {
-            const flight = flights.get(icao24);
-            if (!flight) continue;
-            const prev = lastSavedTimestamp.current.get(icao24);
-            if (prev === flight.timestamp) continue;
-            lastSavedTimestamp.current.set(icao24, flight.timestamp);
-            void savePosition(icao24);
-        }
-    }, [flights, watchedIcao24s, savePosition]);
 
     const handleSave = async (note: string) => {
         if (!selectedIcao24) return;
@@ -203,6 +188,7 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
                 <MapController onMapReady={setMapInstance} />
                 {!isWatchPanelOpen && <FlightTrail points={selectedTrail} />}
                 {!isWatchPanelOpen && <FlightHistoryRoute records={history} />}
+                {isWatchPanelOpen && <RecordedRoutes records={records} />}
             </MapContainer>
 
             <WatchedFlightsPanel

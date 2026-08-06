@@ -9,6 +9,7 @@ import { GraphQLError } from "graphql"
 import { FlightRepository } from "../../persistence/FlightRepository.js";
 import type { LiveFlightStore } from "../../messaging/LiveFlightStore.js";
 import type { BookmarkRepository } from "../../persistence/BookmarkRepository.js";
+import type { WatchStore } from "../../messaging/WatchStore.js";
 
 // Mercurius context injected into every resolver.
 interface MercuriusContext {
@@ -20,6 +21,7 @@ interface ResolverDependencies {
     liveFlightStore: LiveFlightStore;
     flightRepository: FlightRepository;
     bookmarkRepository: BookmarkRepository;
+    watchStore: WatchStore;
 }
 
 // Creates the GraphQL resolver map.
@@ -45,6 +47,9 @@ export function createResolvers(deps: ResolverDependencies) {
             },
             bookmarks: async () => {
                 return deps.bookmarkRepository.findAll();
+            },
+            watchedIcao24s: async () => {
+                return deps.watchStore.getAll();
             }
         },
         Mutation: {
@@ -69,6 +74,24 @@ export function createResolvers(deps: ResolverDependencies) {
                 args: { icao24: string },
             ) => {
                 return deps.bookmarkRepository.remove(args.icao24);
+            },
+            watchFlight: async (
+                _root: unknown,
+                args: { icao24: string },
+            ) => {
+                deps.watchStore.watch(args.icao24);
+                return true;
+            },
+            unwatchFlight: async (
+                _root: unknown,
+                args: { icao24: string },
+            ) => {
+                deps.watchStore.unwatch(args.icao24);
+                return true;
+            },
+            unwatchAll: async () => {
+                deps.watchStore.unwatchAll();
+                return true;
             }
         },
         Subscription: {

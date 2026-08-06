@@ -68,4 +68,10 @@ export const BOOKMARKS_QUERY = `
       createdAt
     }
   }
-`
+`;
+
+export const WATCHED_ICAO24S_QUERY = `
+  query WatchedIcao24s {
+    watchedIcao24s
+  }
+`;

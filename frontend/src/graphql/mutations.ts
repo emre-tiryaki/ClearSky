@@ -25,3 +25,21 @@ export const REMOVE_BOOKMARK_MUTATION = `
     removeBookmark(icao24: $icao24)
   }
 `;
+
+export const WATCH_FLIGHT_MUTATION = `
+  mutation WatchFlight($icao24: String!) {
+    watchFlight(icao24: $icao24)
+  }
+`;
+
+export const UNWATCH_FLIGHT_MUTATION = `
+  mutation UnwatchFlight($icao24: String!) {
+    unwatchFlight(icao24: $icao24)
+  }
+`;
+
+export const UNWATCH_ALL_MUTATION = `
+  mutation UnwatchAll {
+    unwatchAll
+  }
+`;

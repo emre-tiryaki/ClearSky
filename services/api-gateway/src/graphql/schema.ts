@@ -63,12 +63,16 @@ export const typeDefs = `
         flightRecords(startDate: String!, endDate: String!): [FlightRecord!]!
         flightHistory(icao24: String!): [FlightRecord!]!
         bookmarks: [Bookmark!]!
+        watchedIcao24s: [String!]!
     }
 
     type Mutation {
         saveFlightRecord(input: SaveFlightRecordInput!): FlightRecord!
         bookmarkFlight(icao24: String!, callsign: String, category: Int!): Bookmark!
         removeBookmark(icao24: String!): Boolean!
+        watchFlight(icao24: String!): Boolean!
+        unwatchFlight(icao24: String!): Boolean!
+        unwatchAll: Boolean!
     }
 
     type Subscription {
