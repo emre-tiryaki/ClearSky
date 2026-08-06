@@ -183,7 +183,7 @@ export function WatchedFlightsPanel({
                                     type="range"
                                     min={rangeStartMs}
                                     max={rangeEndMs}
-                                    step={10_000}
+                                    step={1000}
                                     value={momentMs}
                                     onChange={e => onMomentChange(Number(e.target.value))}
                                     className="mt-1 w-full accent-blue-600"

@@ -4,7 +4,6 @@ import { executeGraphQLOperation } from "../graphql/httpClient";
 import {
     WATCH_FLIGHT_MUTATION,
     UNWATCH_FLIGHT_MUTATION,
-    UNWATCH_ALL_MUTATION,
 } from "../graphql/mutations";
 import { FLIGHT_RECORDS_QUERY, WATCHED_ICAO24S_QUERY } from "../graphql/queries";
 

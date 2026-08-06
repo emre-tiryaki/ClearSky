@@ -6,8 +6,8 @@ interface GraphQLResponse<T> {
 
 // Executes a GraphQL query or mutation over HTTP and returns the typed data payload.
 export async function executeGraphQLOperation<T>(
-    query:string,
-    variables: Record<string, unknown>,
+    query: string,
+    variables: Record<string, unknown> = {},
 ): Promise<T> {
     const url = import.meta.env.VITE_GRAPHQL_HTTP_URL;
     if (!url)

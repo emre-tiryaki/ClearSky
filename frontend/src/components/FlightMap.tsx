@@ -51,20 +51,101 @@ function recordToPosition(r: FlightRecord): FlightPosition {
     };
 }
 
-// For each unique aircraft in records, returns the record whose timestamp is closest to momentMs.
+function interpolateNumber(a: number | null | undefined, b: number | null | undefined, t: number): number | null {
+    if (a == null && b == null) return null;
+    if (a == null) return b!;
+    if (b == null) return a;
+    return a + (b - a) * t;
+}
+
+function interpolateHeading(h1: number | null, h2: number | null, t: number): number | null {
+    if (h1 == null && h2 == null) return null;
+    if (h1 == null) return h2!;
+    if (h2 == null) return h1;
+
+    let diff = (h2 - h1) % 360;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    let result = (h1 + diff * t) % 360;
+    if (result < 0) result += 360;
+    return result;
+}
+
+// Linearly interpolates aircraft positions between recorded data points for the given moment.
 function positionsAtMoment(records: FlightRecord[], momentMs: number): FlightPosition[] {
-    const byAircraft = new Map<string, FlightRecord>();
+    const byAircraft = new Map<string, FlightRecord[]>();
     for (const r of records) {
-        const existing = byAircraft.get(r.icao24);
-        if (!existing) {
-            byAircraft.set(r.icao24, r);
+        if (!byAircraft.has(r.icao24)) byAircraft.set(r.icao24, []);
+        byAircraft.get(r.icao24)!.push(r);
+    }
+
+    const result: FlightPosition[] = [];
+
+    for (const [, recs] of byAircraft.entries()) {
+        if (recs.length === 0) continue;
+
+        const sorted = [...recs].sort(
+            (a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime()
+        );
+
+        const firstTime = new Date(sorted[0].recordedAt).getTime();
+        const lastTime = new Date(sorted[sorted.length - 1].recordedAt).getTime();
+
+        if (momentMs <= firstTime) {
+            result.push(recordToPosition(sorted[0]));
             continue;
         }
-        const ed = Math.abs(new Date(existing.recordedAt).getTime() - momentMs);
-        const cd = Math.abs(new Date(r.recordedAt).getTime() - momentMs);
-        if (cd < ed) byAircraft.set(r.icao24, r);
+        if (momentMs >= lastTime) {
+            result.push(recordToPosition(sorted[sorted.length - 1]));
+            continue;
+        }
+
+        let r1 = sorted[0];
+        let r2 = sorted[sorted.length - 1];
+
+        for (let i = 0; i < sorted.length - 1; i++) {
+            const t1 = new Date(sorted[i].recordedAt).getTime();
+            const t2 = new Date(sorted[i + 1].recordedAt).getTime();
+            if (momentMs >= t1 && momentMs <= t2) {
+                r1 = sorted[i];
+                r2 = sorted[i + 1];
+                break;
+            }
+        }
+
+        const t1 = new Date(r1.recordedAt).getTime();
+        const t2 = new Date(r2.recordedAt).getTime();
+
+        if (t1 === t2) {
+            result.push(recordToPosition(r1));
+            continue;
+        }
+
+        const t = (momentMs - t1) / (t2 - t1);
+
+        const lat = r1.latitude + t * (r2.latitude - r1.latitude);
+        const lon = r1.longitude + t * (r2.longitude - r1.longitude);
+        const altitude = interpolateNumber(r1.altitude, r2.altitude, t);
+        const speed = interpolateNumber(r1.velocity, r2.velocity, t);
+        const heading = interpolateHeading(r1.heading, r2.heading, t);
+
+        result.push({
+            icao24: r1.icao24,
+            callsign: r1.callsign ?? r2.callsign,
+            latitude: lat,
+            longitude: lon,
+            altitude,
+            speed,
+            heading,
+            onGround: t < 0.5 ? r1.onGround : r2.onGround,
+            verticalRate: interpolateNumber(r1.verticalRate, r2.verticalRate, t),
+            timestamp: new Date(momentMs).toISOString(),
+            category: r1.category ?? r2.category,
+        });
     }
-    return Array.from(byAircraft.values()).map(recordToPosition);
+
+    return result;
 }
 
 export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCountChange }: FlightMapProps) {
@@ -137,6 +218,19 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
         if (isWatchPanelOpen) handleApplyRange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isWatchPanelOpen]);
+
+    // Automatically fit the slider range to the exact span of fetched records
+    useEffect(() => {
+        if (records.length === 0) return;
+        const times = records.map(r => new Date(r.recordedAt).getTime());
+        const minTime = Math.min(...times);
+        const maxTime = Math.max(...times);
+        if (minTime < maxTime) {
+            setRangeStartMs(minTime);
+            setRangeEndMs(maxTime);
+            setMomentMs(prev => (prev < minTime || prev > maxTime) ? maxTime : prev);
+        }
+    }, [records]);
 
     // In tracked mode (watch panel open), show recorded positions at current moment.
     // In live mode, show the normal filtered & visible live flights.
