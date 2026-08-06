@@ -47,7 +47,7 @@ export const FLIGHT_RECORDS_QUERY = `
 `;
 
 export const FLIGHT_HISTORY_QUERY = `
-  query FlightHistory($icao24: String) {
+  query FlightHistory($icao24: String!) {
     flightHistory(icao24: $icao24) {
       id
       latitude
