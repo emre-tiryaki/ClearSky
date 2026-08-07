@@ -24,7 +24,7 @@ function App() {
         debounceRef.current = setTimeout(() => setBbox(next), BBOX_DEBOUNCE_MS);
     }, []);
 
-    const {flights, trails} = useLiveFlights(bbox);
+    const { flights, trails } = useLiveFlights(bbox);
     const systemStatus = useSystemStatus();
     const [view, setView] = useState<"map" | "report">("map");
     const [visibleCount, setVisibleCount] = useState(0);
@@ -36,26 +36,32 @@ function App() {
     return (
         <div className="h-screen w-screen flex flex-col">
             <header className="relative z-1000 bg-slate-900 text-white px-4 py-2 flex items-center justify-between">
-                <h1 className="text-lg font-semibold">
-                    Clear Sky &mdash; Live Flight Dashboard
-                </h1>
-                <span className="text-sm text-slate-300">
-                    {view === "map" 
-                        ? (visibleCount > 0 ? `${visibleCount}`: "No") 
-                        : (flights.size > 0 ? `${flights.size}`: "No")} planes are showing
-                </span>
                 <div className="flex items-center gap-4">
-                    <ProjectScopeTooltip />
+                    <h1 className="text-lg font-semibold">
+                        Clear Sky &mdash; Live Flight Dashboard
+                    </h1>
 
-                    <button
-                        onClick={() =>
-                            setView((v) => (v === "map" ? "report" : "map"))
-                        }
-                        className="text-sm underline"
-                    >
-                        {view === "map" ? "Report Page" : "Map Page"}
-                    </button>
+                    <ProjectScopeTooltip />
                 </div>
+                <span className="text-sm text-slate-300">
+                    {view === "map"
+                        ? visibleCount > 0
+                            ? `${visibleCount}`
+                            : "No"
+                        : flights.size > 0
+                          ? `${flights.size}`
+                          : "No"}{" "}
+                    planes are showing
+                </span>
+
+                <button
+                    onClick={() =>
+                        setView((v) => (v === "map" ? "report" : "map"))
+                    }
+                    className="text-sm underline"
+                >
+                    {view === "map" ? "Report Page" : "Map Page"}
+                </button>
             </header>
             <StatusBanner status={systemStatus} />
             <main className="flex-1">
