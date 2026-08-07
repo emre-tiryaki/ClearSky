@@ -52,7 +52,7 @@ async function main(): Promise<void> {
 					'OpenSky Network API Rate limit is exceeded.',
 					error.retryAfterSeconds
 				)
-				return;
+				return error.retryAfterSeconds * 1000;
 			} else if (error instanceof OpenSkyAuthError) {
 				console.warn(`OpenSky Auth Error: there is an authentication error: ${error.message}`);
 				await publishStatusIfChanged(

@@ -208,8 +208,8 @@ export function ReportPage() {
                     <button
                         onClick={() =>
                             fetch(
-                                new Date(startDate).toISOString(),
-                                new Date(endDate).toISOString(),
+                                new Date(startDate + 'T00:00:00.000Z').toISOString(),
+                                new Date(endDate + 'T23:59:59.999Z').toISOString(),
                             )
                         }
                         disabled={loading || !startDate || !endDate}

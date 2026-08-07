@@ -19,7 +19,7 @@ function App() {
     const [bbox, setBbox] = useState<BoundingBox>(TURKEY_BBOX);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const handleBounceChange = useCallback((next: BoundingBox) => {
+    const handleBoundsChange = useCallback((next: BoundingBox) => {
         if (debounceRef.current) clearTimeout(debounceRef.current);
         debounceRef.current = setTimeout(() => setBbox(next), BBOX_DEBOUNCE_MS);
     }, []);
@@ -68,7 +68,7 @@ function App() {
                         flights={flights}
                         trails={trails}
                         bbox={bbox}
-                        onBoundsChange={handleBounceChange}
+                        onBoundsChange={handleBoundsChange}
                         onVisibleCountChange={handleVisibleCountChange}
                     />
                 ) : (

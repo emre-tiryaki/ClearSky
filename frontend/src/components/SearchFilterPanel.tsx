@@ -34,7 +34,7 @@ const VERTICAL_RATE_LABELS: Record<VerticalRateFilter, string> = {
     all: "All",
     climbing: "Climbing",
     level: "Level",
-    descending: "descending",
+    descending: "Descending",
 };
 
 // Small inline plane SVG used next to bookmark entries.
@@ -203,7 +203,7 @@ export function SearchFilterPanel({
                                     No Bookmarked Aircraft
                                 </p>
                             ) : (
-                                <ul className="mt-1 spac-y-1">
+                                <ul className="mt-1 space-y-1">
                                     {bookmarks.map((b) => (
                                         <li
                                             key={b.icao24}
@@ -331,7 +331,7 @@ export function SearchFilterPanel({
 
                         <div>
                             <label className="text-sm font-medium text-slate-600">
-                                Speed (m/s)
+                                Speed (km/h)
                             </label>
                             <div className="mt-1 flex gap-2">
                                 <input

@@ -1,3 +1,5 @@
+import { loadConfig } from "../config/env";
+
 // Typed response envelope for GraphQL HTTP calls.
 interface GraphQLResponse<T> {
     data?: T;
@@ -9,11 +11,11 @@ export async function executeGraphQLOperation<T>(
     query: string,
     variables: Record<string, unknown> = {},
 ): Promise<T> {
-    const url = import.meta.env.VITE_GRAPHQL_HTTP_URL;
-    if (!url)
+    const { graphqlHttpUrl } = loadConfig();
+    if (!graphqlHttpUrl)
         throw new Error("VITE_GRAPHQL_HTTP_URL is not configured");
 
-    const response = await fetch(url, {
+    const response = await fetch(graphqlHttpUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query, variables }),

@@ -66,7 +66,13 @@ async function main(): Promise<void> {
 
 	await app.listen({ port: config.port, host: "0.0.0.0" });
 
+	const pruneInterval = setInterval(() => {
+		const removed = liveFlightStore.prune();
+		if (removed > 0) console.log(`LiveFlightStore: pruned ${removed} stale aircraft`);
+	}, 60_000);
+
 	const shutdown = async (): Promise<void> => {
+		clearInterval(pruneInterval);
 		await app.close();
 		await mongoConnection.close();
 	}

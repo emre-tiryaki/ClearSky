@@ -51,7 +51,7 @@ function AircraftMarkerComponent({
                 <div>
                     speed:{" "}
                     {flight.speed != null
-                        ? `${Math.round(flight.speed)} m/s`
+                        ? `${Math.round(flight.speed * 3.6)} km/h`
                         : "-"}
                 </div>
                 <div>

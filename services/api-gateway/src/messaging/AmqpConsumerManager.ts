@@ -49,7 +49,7 @@ export class AmqpConsumerManager {
     }
 
     // Sends a ack signal to amqp, meaning that the message is handled and can be removed.
-    private ack(msg: ConsumeMessage): any {
+    private ack(msg: ConsumeMessage): void {
         this.getChannel().ack(msg);
     }
 

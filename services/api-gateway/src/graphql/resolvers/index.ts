@@ -3,7 +3,7 @@ import { LIVE_FLIGHTS_TOPIC } from "../../messaging/FlightMessageHandler.js";
 import type { BoundingBox, FlightPosition, SavedBookmark, SavedFlightRecord, SystemStatus } from "../../../../../shared/index.js";
 import { filterByBoundingBox } from "../filterByBoundingBox.js";
 import { SYSTEM_STATUS_TOPIC } from "../../messaging/SystemStatusMessageHandler.js";
-import { withInitialValue, withInitialValues } from "../withInıtialValue.js";
+import { withInitialValue, withInitialValues } from "../withInitialValue.js";
 import { systemStatusStore } from "../../messaging/SystemStatusStore.js";
 import { GraphQLError } from "graphql"
 import { FlightRepository } from "../../persistence/FlightRepository.js";
@@ -37,6 +37,10 @@ export function createResolvers(deps: ResolverDependencies) {
             ) => {
                 const start = new Date(args.startDate);
                 const end = new Date(args.endDate);
+                if (isNaN(start.getTime()))
+                    throw new GraphQLError(`Invalid startDate: "${args.startDate}"`);
+                if (isNaN(end.getTime()))
+                    throw new GraphQLError(`Invalid endDate: "${args.endDate}"`);
                 if (start > end)
                     throw new GraphQLError("Start date cannot be later than end date!!!");
 

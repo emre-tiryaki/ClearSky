@@ -26,26 +26,39 @@ export function useWatchedFlights() {
     const [loadingRecords, setLoadingRecords] = useState(false);
 
     const toggleWatch = useCallback(async (icao24: string) => {
+        const wasWatched = watchedIcao24s.has(icao24);
         setWatchedIcao24s(prev => {
             const next = new Set(prev);
-            if (next.has(icao24)) {
-                next.delete(icao24);
-                void executeGraphQLOperation(UNWATCH_FLIGHT_MUTATION, { icao24 });
-            } else {
-                next.add(icao24);
-                void executeGraphQLOperation(WATCH_FLIGHT_MUTATION, { icao24 });
-            }
+            if (next.has(icao24)) next.delete(icao24);
+            else next.add(icao24);
             return next;
         });
-    }, []);
+        try {
+            const mutation = wasWatched ? UNWATCH_FLIGHT_MUTATION : WATCH_FLIGHT_MUTATION;
+            await executeGraphQLOperation(mutation, { icao24 });
+        } catch (err) {
+            console.error("toggleWatch: backend sync failed, rolling back", err);
+            setWatchedIcao24s(prev => {
+                const next = new Set(prev);
+                if (wasWatched) next.add(icao24);
+                else next.delete(icao24);
+                return next;
+            });
+        }
+    }, [watchedIcao24s]);
 
-    const stopWatching = useCallback((icao24: string) => {
+    const stopWatching = useCallback(async (icao24: string) => {
         setWatchedIcao24s(prev => {
             const next = new Set(prev);
             next.delete(icao24);
             return next;
         });
-        void executeGraphQLOperation(UNWATCH_FLIGHT_MUTATION, { icao24 });
+        try {
+            await executeGraphQLOperation(UNWATCH_FLIGHT_MUTATION, { icao24 });
+        } catch (err) {
+            console.error("stopWatching: backend sync failed, rolling back", err);
+            setWatchedIcao24s(prev => new Set(prev).add(icao24));
+        }
     }, []);
 
     const fetchRecords = useCallback(async (startDate: string, endDate: string) => {
