@@ -10,10 +10,10 @@ export function useSystemStatus(): SystemStatus | null {
     useEffect(() => {
         const client = getGraphQlWsClient();
 
-        const unsubscribe = client.subscribe<{systemStatus: SystemStatus}>(
-            {query: SYSTEM_STATUS_SUBSCRIPTION},
+        const unsubscribe = client.subscribe<{ systemStatus: SystemStatus }>(
+            { query: SYSTEM_STATUS_SUBSCRIPTION },
             {
-                next: ({data}) => {
+                next: ({ data }) => {
                     const value = data?.systemStatus;
                     if (value) setStatus(value);
                 },

@@ -3,16 +3,16 @@ import type { TrailPoint } from "../types/trail";
 import { speedToColor } from "../utils/speedColor";
 
 interface FlightTrailProps {
-    points: TrailPoint[]
+    points: TrailPoint[];
 }
 
 // Renders a speed-colored polyline trail for the currently selected aircraft.
 // Each segment is colored on a blue-to-red gradient based on relative speed.
-export function FlightTrail({points}: FlightTrailProps) {
+export function FlightTrail({ points }: FlightTrailProps) {
     if (points.length < 2) return null;
 
     const speeds = points
-        .map(p => p.speed)
+        .map((p) => p.speed)
         .filter((s): s is number => s !== null);
 
     const minSpeed = speeds.length ? Math.min(...speeds) : 0;
@@ -27,13 +27,20 @@ export function FlightTrail({points}: FlightTrailProps) {
                 const t = range > 0 ? (speed - minSpeed) / range : 0.5;
 
                 return (
-                    <Polyline 
+                    <Polyline
                         key={curr.timestamp}
-                        positions={[[prev.lat, prev.lon], [curr.lat, curr.lon]]}
-                        pathOptions={{color: speedToColor(t), weight: 3, opacity: 0.85}}
+                        positions={[
+                            [prev.lat, prev.lon],
+                            [curr.lat, curr.lon],
+                        ]}
+                        pathOptions={{
+                            color: speedToColor(t),
+                            weight: 3,
+                            opacity: 0.85,
+                        }}
                     />
-                )
+                );
             })}
         </>
-    )
+    );
 }

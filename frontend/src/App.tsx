@@ -1,11 +1,11 @@
-import { useCallback, useRef, useState } from "react";
-import type { BoundingBox } from "./types/flight";
-import { useLiveFlights } from "./hooks/useLiveFlights";
-import { FlightMap } from "./components/FlightMap";
-import { useSystemStatus } from "./hooks/useSystemStatus";
-import { StatusBanner } from "./components/StatusBanner";
-import { ReportPage } from "./pages/ReportPage";
-import { ProjectScopeTooltip } from "./components/ProjectScopeTooltip";
+import { useCallback, useRef, useState } from 'react';
+import type { BoundingBox } from './types/flight';
+import { useLiveFlights } from './hooks/useLiveFlights';
+import { FlightMap } from './components/FlightMap';
+import { useSystemStatus } from './hooks/useSystemStatus';
+import { StatusBanner } from './components/StatusBanner';
+import { ReportPage } from './pages/ReportPage';
+import { ProjectScopeTooltip } from './components/ProjectScopeTooltip';
 
 const TURKEY_BBOX: BoundingBox = {
     lamin: 34.0,
@@ -26,7 +26,7 @@ function App() {
 
     const { flights, trails } = useLiveFlights(bbox);
     const systemStatus = useSystemStatus();
-    const [view, setView] = useState<"map" | "report">("map");
+    const [view, setView] = useState<'map' | 'report'>('map');
     const [visibleCount, setVisibleCount] = useState(0);
 
     const handleVisibleCountChange = useCallback((count: number) => {
@@ -44,28 +44,26 @@ function App() {
                     <ProjectScopeTooltip />
                 </div>
                 <span className="text-sm text-slate-300">
-                    {view === "map"
+                    {view === 'map'
                         ? visibleCount > 0
                             ? `${visibleCount}`
-                            : "No"
+                            : 'No'
                         : flights.size > 0
                           ? `${flights.size}`
-                          : "No"}{" "}
+                          : 'No'}{' '}
                     planes are showing
                 </span>
 
                 <button
-                    onClick={() =>
-                        setView((v) => (v === "map" ? "report" : "map"))
-                    }
+                    onClick={() => setView(v => (v === 'map' ? 'report' : 'map'))}
                     className="text-sm underline"
                 >
-                    {view === "map" ? "Report Page" : "Map Page"}
+                    {view === 'map' ? 'Report Page' : 'Map Page'}
                 </button>
             </header>
             <StatusBanner status={systemStatus} />
             <main className="flex-1">
-                {view === "map" ? (
+                {view === 'map' ? (
                     <FlightMap
                         flights={flights}
                         trails={trails}

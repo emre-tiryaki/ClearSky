@@ -15,8 +15,8 @@ export async function executeGraphQLOperation<T>(
 
     const response = await fetch(url, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({query, variables}),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables }),
     });
 
     const payload = (await response.json()) as GraphQLResponse<T>;

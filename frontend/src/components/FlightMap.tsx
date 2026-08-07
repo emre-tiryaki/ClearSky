@@ -51,14 +51,22 @@ function recordToPosition(r: FlightRecord): FlightPosition {
     };
 }
 
-function interpolateNumber(a: number | null | undefined, b: number | null | undefined, t: number): number | null {
+function interpolateNumber(
+    a: number | null | undefined,
+    b: number | null | undefined,
+    t: number,
+): number | null {
     if (a == null && b == null) return null;
     if (a == null) return b!;
     if (b == null) return a;
     return a + (b - a) * t;
 }
 
-function interpolateHeading(h1: number | null, h2: number | null, t: number): number | null {
+function interpolateHeading(
+    h1: number | null,
+    h2: number | null,
+    t: number,
+): number | null {
     if (h1 == null && h2 == null) return null;
     if (h1 == null) return h2!;
     if (h2 == null) return h1;
@@ -73,7 +81,10 @@ function interpolateHeading(h1: number | null, h2: number | null, t: number): nu
 }
 
 // Linearly interpolates aircraft positions between recorded data points for the given moment.
-function positionsAtMoment(records: FlightRecord[], momentMs: number): FlightPosition[] {
+function positionsAtMoment(
+    records: FlightRecord[],
+    momentMs: number,
+): FlightPosition[] {
     const byAircraft = new Map<string, FlightRecord[]>();
     for (const r of records) {
         if (!byAircraft.has(r.icao24)) byAircraft.set(r.icao24, []);
@@ -86,11 +97,15 @@ function positionsAtMoment(records: FlightRecord[], momentMs: number): FlightPos
         if (recs.length === 0) continue;
 
         const sorted = [...recs].sort(
-            (a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime()
+            (a, b) =>
+                new Date(a.recordedAt).getTime() -
+                new Date(b.recordedAt).getTime(),
         );
 
         const firstTime = new Date(sorted[0].recordedAt).getTime();
-        const lastTime = new Date(sorted[sorted.length - 1].recordedAt).getTime();
+        const lastTime = new Date(
+            sorted[sorted.length - 1].recordedAt,
+        ).getTime();
 
         if (momentMs <= firstTime) {
             result.push(recordToPosition(sorted[0]));
@@ -139,7 +154,11 @@ function positionsAtMoment(records: FlightRecord[], momentMs: number): FlightPos
             speed,
             heading,
             onGround: t < 0.5 ? r1.onGround : r2.onGround,
-            verticalRate: interpolateNumber(r1.verticalRate, r2.verticalRate, t),
+            verticalRate: interpolateNumber(
+                r1.verticalRate,
+                r2.verticalRate,
+                t,
+            ),
             timestamp: new Date(momentMs).toISOString(),
             category: r1.category ?? r2.category,
         });
@@ -148,7 +167,13 @@ function positionsAtMoment(records: FlightRecord[], momentMs: number): FlightPos
     return result;
 }
 
-export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCountChange }: FlightMapProps) {
+export function FlightMap({
+    flights,
+    trails,
+    bbox,
+    onBoundsChange,
+    onVisibleCountChange,
+}: FlightMapProps) {
     const [selectedIcao24, setSelectedIcao24] = useState<string | null>(null);
     const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
     const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
@@ -156,16 +181,23 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
     const [filters, setFilters] = useState<FlightFilters>(DEFAULT_FILTERS);
 
     // Watch panel time range & moment — owned here so FlightMap can derive tracked positions.
-    const [rangeStartMs, setRangeStartMs] = useState(() => Date.now() - 6 * 60 * 60 * 1000);
+    const [rangeStartMs, setRangeStartMs] = useState(
+        () => Date.now() - 6 * 60 * 60 * 1000,
+    );
     const [rangeEndMs, setRangeEndMs] = useState(() => Date.now());
     const [momentMs, setMomentMs] = useState(() => Date.now());
 
-    const selectedFlight = selectedIcao24 ? (flights.get(selectedIcao24) ?? null) : null;
-    const selectedTrail = selectedIcao24 ? (trails.get(selectedIcao24) ?? []) : [];
+    const selectedFlight = selectedIcao24
+        ? (flights.get(selectedIcao24) ?? null)
+        : null;
+    const selectedTrail = selectedIcao24
+        ? (trails.get(selectedIcao24) ?? [])
+        : [];
 
     const { save, saving, error } = useSaveFlightRecord();
     const { fetch: fetchHistory, history } = useFlightHistory();
-    const { bookmarks, bookmarkedIcao24s, addBookmark, removeBookmark } = useBookmarks();
+    const { bookmarks, bookmarkedIcao24s, addBookmark, removeBookmark } =
+        useBookmarks();
     const {
         watchedIcao24s,
         records,
@@ -192,19 +224,31 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
     const handleFlyToFlight = (icao24: string) => {
         const flight = flights.get(icao24);
         if (!flight || !mapInstance) return;
-        mapInstance.flyTo([flight.latitude, flight.longitude], FLY_TO_ZOOM, { duration: 1 });
+        mapInstance.flyTo([flight.latitude, flight.longitude], FLY_TO_ZOOM, {
+            duration: 1,
+        });
         setSelectedIcao24(icao24);
     };
 
-    const handleFlyToRecord = useCallback((record: FlightRecord) => {
-        if (!mapInstance) return;
-        mapInstance.flyTo([record.latitude, record.longitude], FLY_TO_ZOOM, { duration: 1 });
-    }, [mapInstance]);
+    const handleFlyToRecord = useCallback(
+        (record: FlightRecord) => {
+            if (!mapInstance) return;
+            mapInstance.flyTo(
+                [record.latitude, record.longitude],
+                FLY_TO_ZOOM,
+                { duration: 1 },
+            );
+        },
+        [mapInstance],
+    );
 
-    const handleBookmark = useCallback((icao24: string, callsign: string | null, category: number) => {
-        if (bookmarkedIcao24s.has(icao24)) void removeBookmark(icao24);
-        else void addBookmark(icao24, callsign, category);
-    }, [bookmarkedIcao24s, addBookmark, removeBookmark]);
+    const handleBookmark = useCallback(
+        (icao24: string, callsign: string | null, category: number) => {
+            if (bookmarkedIcao24s.has(icao24)) void removeBookmark(icao24);
+            else void addBookmark(icao24, callsign, category);
+        },
+        [bookmarkedIcao24s, addBookmark, removeBookmark],
+    );
 
     const handleApplyRange = useCallback(() => {
         void fetchRecords(
@@ -216,19 +260,21 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
     // When the watch panel opens, auto-fetch records for the current range.
     useEffect(() => {
         if (isWatchPanelOpen) handleApplyRange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isWatchPanelOpen]);
 
     // Automatically fit the slider range to the exact span of fetched records
     useEffect(() => {
         if (records.length === 0) return;
-        const times = records.map(r => new Date(r.recordedAt).getTime());
+        const times = records.map((r) => new Date(r.recordedAt).getTime());
         const minTime = Math.min(...times);
         const maxTime = Math.max(...times);
         if (minTime < maxTime) {
             setRangeStartMs(minTime);
             setRangeEndMs(maxTime);
-            setMomentMs(prev => (prev < minTime || prev > maxTime) ? maxTime : prev);
+            setMomentMs((prev) =>
+                prev < minTime || prev > maxTime ? maxTime : prev,
+            );
         }
     }, [records]);
 
@@ -236,24 +282,31 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
     // In live mode, show the normal filtered & visible live flights.
     const filteredLiveFlights = useMemo(
         () => filterFlights(Array.from(flights.values()), filters),
-        [flights, filters]
+        [flights, filters],
     );
     const visibleLiveFlights = useMemo(
-        () => filteredLiveFlights.filter(f =>
-            f.latitude >= bbox.lamin && f.latitude <= bbox.lamax &&
-            f.longitude >= bbox.lomin && f.longitude <= bbox.lomax
-        ),
-        [filteredLiveFlights, bbox]
+        () =>
+            filteredLiveFlights.filter(
+                (f) =>
+                    f.latitude >= bbox.lamin &&
+                    f.latitude <= bbox.lamax &&
+                    f.longitude >= bbox.lomin &&
+                    f.longitude <= bbox.lomax,
+            ),
+        [filteredLiveFlights, bbox],
     );
     const trackedPositions = useMemo(
         () => positionsAtMoment(records, momentMs),
-        [records, momentMs]
+        [records, momentMs],
     );
 
-    const displayedFlights = isWatchPanelOpen ? trackedPositions : visibleLiveFlights;
+    const displayedFlights = isWatchPanelOpen
+        ? trackedPositions
+        : visibleLiveFlights;
 
     useEffect(() => {
-        if (!isWatchPanelOpen) onVisibleCountChange?.(visibleLiveFlights.length);
+        if (!isWatchPanelOpen)
+            onVisibleCountChange?.(visibleLiveFlights.length);
     }, [visibleLiveFlights, isWatchPanelOpen, onVisibleCountChange]);
 
     const panelOffset = isFilterPanelOpen ? FILTER_PANEL_WIDTH : 0;
@@ -287,7 +340,7 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
 
             <WatchedFlightsPanel
                 isOpen={isWatchPanelOpen}
-                onToggle={() => setIsWatchPanelOpen(o => !o)}
+                onToggle={() => setIsWatchPanelOpen((o) => !o)}
                 watchedIcao24s={watchedIcao24s}
                 onStopWatching={stopWatching}
                 records={records}
@@ -308,9 +361,9 @@ export function FlightMap({ flights, trails, bbox, onBoundsChange, onVisibleCoun
                 onFiltersChange={setFilters}
                 onSelectFlight={handleFlyToFlight}
                 isOpen={isFilterPanelOpen}
-                onToggle={() => setIsFilterPanelOpen(o => !o)}
+                onToggle={() => setIsFilterPanelOpen((o) => !o)}
                 bookmarks={bookmarks}
-                onRemoveBookmark={icao24 => void removeBookmark(icao24)}
+                onRemoveBookmark={(icao24) => void removeBookmark(icao24)}
             />
 
             {selectedFlight && (

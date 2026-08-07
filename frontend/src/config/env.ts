@@ -6,7 +6,7 @@ export interface FrontendConfig {
 
 function requireEnv(name: keyof ImportMetaEnv): string {
     const value = import.meta.env[name];
-    if(!value)
+    if (!value)
         throw new Error(`env variable missing: ${name}`);
 
     return value;

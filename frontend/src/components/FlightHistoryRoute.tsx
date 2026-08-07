@@ -8,10 +8,12 @@ interface FlightHistoryRouteProps {
 
 // Renders historical flight path as a dashed, speed-colored polyline
 // using persisted FlightRecord data fetched from the database.
-export function FlightHistoryRoute({records}: FlightHistoryRouteProps) {
+export function FlightHistoryRoute({ records }: FlightHistoryRouteProps) {
     if (records.length < 2) return null;
 
-    const speeds = records.map(r => r.velocity). filter((s): s is number => s !== null);
+    const speeds = records
+        .map((r) => r.velocity)
+        .filter((s): s is number => s !== null);
     const minSpeed = speeds.length ? Math.min(...speeds) : 0;
     const maxSpeed = speeds.length ? Math.max(...speeds) : 0;
     const range = maxSpeed - minSpeed;
@@ -24,13 +26,21 @@ export function FlightHistoryRoute({records}: FlightHistoryRouteProps) {
                 const t = range > 0 ? (speed - minSpeed) / range : 0.5;
 
                 return (
-                    <Polyline 
+                    <Polyline
                         key={curr.id}
-                        positions={[[prev.latitude, prev.longitude], [curr.latitude, curr.longitude]]}
-                        pathOptions={{color: speedToColor(t), weight: 3, opacity: 0.85, dashArray: "4 4"}}
+                        positions={[
+                            [prev.latitude, prev.longitude],
+                            [curr.latitude, curr.longitude],
+                        ]}
+                        pathOptions={{
+                            color: speedToColor(t),
+                            weight: 3,
+                            opacity: 0.85,
+                            dashArray: "4 4",
+                        }}
                     />
-                )
+                );
             })}
         </>
-    )
+    );
 }

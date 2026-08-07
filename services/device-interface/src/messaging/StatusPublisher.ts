@@ -9,7 +9,7 @@ export class StatusPublisher implements AmqpPublisher<SystemStatus> {
     constructor(
         private readonly connectionManager: AmqpConnectionManager,
         private readonly exchange: string
-    ) {}
+    ) { }
 
     // Sends status of the service to the broker
     async publish(status: SystemStatus): Promise<void> {

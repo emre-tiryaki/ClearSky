@@ -11,7 +11,7 @@ export class AmqpConnectionManager {
         private readonly url: string,
         private readonly exchangeName: string,
         private readonly exchangeType: 'topic' = 'topic'
-    ) {}
+    ) { }
 
     // Opens the connection, creates a channel, and ensures the exchange exists.
     async connect(): Promise<void> {
@@ -29,12 +29,12 @@ export class AmqpConnectionManager {
             void this.scheduleReconnect();
         })
     }
-    
+
     // Returns the active AMQP channel after connect() has been called.
     getChannel(): Channel {
         if (!this.channel)
             throw new Error("AmqpConnectionManager: cant use getChannel before connect()");
-        
+
         return this.channel;
     }
 
@@ -46,13 +46,13 @@ export class AmqpConnectionManager {
             { contentType: 'application/json', persistent }
         );
     }
-    
+
     // Declares the exchange used for publishing messages.
     async assertExchange(): Promise<void> {
         await this.getChannel().assertExchange(
-            this.exchangeName, 
-            this.exchangeType, 
-            {durable: true}
+            this.exchangeName,
+            this.exchangeType,
+            { durable: true }
         );
     }
 
@@ -63,7 +63,7 @@ export class AmqpConnectionManager {
         this.reconnecting = true;
         this.channel = null;
 
-        while(true) {
+        while (true) {
             try {
                 await new Promise(resolve => setTimeout(resolve, 5000));
                 console.log(`AmqpConnectionManager: attempting to reconnect...`);

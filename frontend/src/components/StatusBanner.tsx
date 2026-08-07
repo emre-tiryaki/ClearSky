@@ -6,13 +6,13 @@ interface StatusBannerProps {
 
 // Amber warning bar shown only when the backend reports a RATE_LIMITED status.
 export function StatusBanner({ status }: StatusBannerProps) {
-  if (!status || status.type !== "RATE_LIMITED") return null;
+    if (!status || status.type !== "RATE_LIMITED") return null;
 
-  return (
-    <div className="bg-amber-500 text-amber-950 px-4 py-2 text-sm font-medium text-center">
-      {status.message}
-      {status.retryAfterSeconds != null &&
-        ` (${status.retryAfterSeconds} saniye sonra tekrar denenecek)`}
-    </div>
-  );
+    return (
+        <div className="bg-amber-500 text-amber-950 px-4 py-2 text-sm font-medium text-center">
+            {status.message}
+            {status.retryAfterSeconds != null &&
+                ` (${status.retryAfterSeconds} saniye sonra tekrar denenecek)`}
+        </div>
+    );
 }

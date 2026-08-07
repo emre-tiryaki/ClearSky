@@ -24,7 +24,7 @@ export class OpenSkyTokenManager {
     constructor(
         private readonly clientId: string,
         private readonly clientSecret: string,
-    ) {}
+    ) { }
 
     async getToken(): Promise<string> {
         if (this.token && this.expiresAt && Date.now() < this.expiresAt)
@@ -37,7 +37,7 @@ export class OpenSkyTokenManager {
         this.token = null;
         this.expiresAt = null;
     }
- 
+
     private async refresh(): Promise<string> {
         const body = new URLSearchParams({
             grant_type: "client_credentials",
@@ -50,12 +50,12 @@ export class OpenSkyTokenManager {
             body,
         });
 
-        if (!response.ok) 
+        if (!response.ok)
             throw new OpenSkyAuthError(response.status);
 
         const payload = (await response.json()) as TokenResponse;
         this.token = payload.access_token;
-        this.expiresAt = Date.now() + (payload.expires_in - REFRESH_MARGIN_SECONDS) * 1000  ;
+        this.expiresAt = Date.now() + (payload.expires_in - REFRESH_MARGIN_SECONDS) * 1000;
 
         return this.token;
     }

@@ -1,7 +1,7 @@
 // Maps an OpenSky aircraft category code to a human-readable label.
 export function getCategoryName(category: number | null | undefined): string {
     if (category == null) return "Bilinmiyor";
-    
+
     switch (category) {
         case 1: return "No info (ADS-B)";
         case 2: return "Light Aircraft (< 15.500 lb)";

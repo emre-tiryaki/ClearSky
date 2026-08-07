@@ -42,7 +42,7 @@ export function useBookmarks() {
     ) => {
         const result = await executeGraphQLOperation<BookmarkFlightResult>(
             BOOKMARK_FLIGHT_MUTATION,
-            {icao24, callsign, category},
+            { icao24, callsign, category },
         );
         setBookmarks(prev => {
             const exists = prev.some(b => b.icao24 === icao24);
@@ -52,11 +52,11 @@ export function useBookmarks() {
     }, []);
 
     const removeBookmark = useCallback(async (icao24: string) => {
-        await executeGraphQLOperation(REMOVE_BOOKMARK_MUTATION, {icao24});
+        await executeGraphQLOperation(REMOVE_BOOKMARK_MUTATION, { icao24 });
         setBookmarks(prev => prev.filter(b => b.icao24 !== icao24));
     }, []);
 
     const bookmarkedIcao24s = new Set(bookmarks.map(b => b.icao24));
 
-    return {bookmarks, bookmarkedIcao24s, loading, addBookmark, removeBookmark}
+    return { bookmarks, bookmarkedIcao24s, loading, addBookmark, removeBookmark }
 }

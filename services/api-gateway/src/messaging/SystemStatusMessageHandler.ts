@@ -8,8 +8,8 @@ export const SYSTEM_STATUS_TOPIC = 'SYSTEM_STATUS_UPDATED';
 
 // Handles incoming system-status messages from RabbitMQ.
 // Updates the global status store and publishes to GraphQL subscribers.
-export class SystemStatusMessageHandler implements QueueMessageHandler{
-    constructor(private readonly publisher: EventPublisher) {}
+export class SystemStatusMessageHandler implements QueueMessageHandler {
+    constructor(private readonly publisher: EventPublisher) { }
 
     async handle(messsage: ConsumeMessage): Promise<void> {
         const status = this.parse(messsage);

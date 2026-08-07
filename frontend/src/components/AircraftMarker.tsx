@@ -8,16 +8,33 @@ interface AircraftMarkerProps {
     flight: FlightPosition;
     onSelect: (icao24: string) => void;
     isBookmarked: boolean;
-    onBookmark: (icao24: string, callsign: string | null, category: number) => void;
+    onBookmark: (
+        icao24: string,
+        callsign: string | null,
+        category: number,
+    ) => void;
     isWatched: boolean;
     onToggleWatch: (icao24: string) => void;
 }
 
-function AircraftMarkerComponent({flight, onSelect, isBookmarked, onBookmark, isWatched, onToggleWatch}: AircraftMarkerProps) {
+function AircraftMarkerComponent({
+    flight,
+    onSelect,
+    isBookmarked,
+    onBookmark,
+    isWatched,
+    onToggleWatch,
+}: AircraftMarkerProps) {
     return (
         <Marker
             position={[flight.latitude, flight.longitude]}
-            icon={getPlaneIcon(flight.heading, flight.onGround, flight.category, flight.altitude, flight.speed)}
+            icon={getPlaneIcon(
+                flight.heading,
+                flight.onGround,
+                flight.category,
+                flight.altitude,
+                flight.speed,
+            )}
             eventHandlers={{
                 click: () => onSelect(flight.icao24),
             }}
@@ -26,24 +43,45 @@ function AircraftMarkerComponent({flight, onSelect, isBookmarked, onBookmark, is
                 <strong>{flight.callsign?.trim() || flight.icao24}</strong>
                 <div>ICAO24: {flight.icao24}</div>
                 <div>
-                    altitude: {flight.altitude != null ? `${Math.round(flight.altitude)} m` : "-"}
+                    altitude:{" "}
+                    {flight.altitude != null
+                        ? `${Math.round(flight.altitude)} m`
+                        : "-"}
                 </div>
                 <div>
-                    speed: {flight.speed != null ? `${Math.round(flight.speed)} m/s` : "-"}
+                    speed:{" "}
+                    {flight.speed != null
+                        ? `${Math.round(flight.speed)} m/s`
+                        : "-"}
                 </div>
                 <div>
-                    heading: {flight.heading != null ? `${Math.round(flight.heading)}°` : "-"}
+                    heading:{" "}
+                    {flight.heading != null
+                        ? `${Math.round(flight.heading)}°`
+                        : "-"}
                 </div>
                 <div>On ground: {flight.onGround ? "Yes" : "No"}</div>
                 <div>
                     Category: {getCategoryName(flight.category)}
-                    <span style={{ color: "#6b7280", fontSize: "0.8em", marginLeft: "4px" }}>
+                    <span
+                        style={{
+                            color: "#6b7280",
+                            fontSize: "0.8em",
+                            marginLeft: "4px",
+                        }}
+                    >
                         Code: {flight.category}
                     </span>
                 </div>
-                <div style={{marginTop: "8px"}}>
-                    <button 
-                        onClick={() => onBookmark(flight.icao24, flight.callsign, flight.category)}
+                <div style={{ marginTop: "8px" }}>
+                    <button
+                        onClick={() =>
+                            onBookmark(
+                                flight.icao24,
+                                flight.callsign,
+                                flight.category,
+                            )
+                        }
                         style={{
                             padding: "4px 10px",
                             fontSize: "0.8em",

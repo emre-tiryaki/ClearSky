@@ -36,15 +36,15 @@ Design rationale (dead-letter exchanges, why GraphQL over REST, why RabbitMQ dec
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Language | TypeScript (all services) |
-| Backend framework | Fastify + Mercurius (GraphQL) |
-| Messaging | RabbitMQ (`amqplib`), topic exchange |
-| Database | MongoDB |
-| Frontend | React, Vite, Tailwind CSS, Leaflet / react-leaflet |
-| Realtime transport | `graphql-ws` (subscriptions over WebSocket) |
-| Orchestration | Docker Compose |
+| Layer                | Technology                                                     |
+| -------------------- | -------------------------------------------------------------- |
+| Language             | TypeScript (all services)                                      |
+| Backend framework    | Fastify + Mercurius (GraphQL)                                  |
+| Messaging            | RabbitMQ (`amqplib`), topic exchange                           |
+| Database             | MongoDB                                                        |
+| Frontend             | React, Vite, Tailwind CSS, Leaflet / react-leaflet             |
+| Realtime transport   | `graphql-ws` (subscriptions over WebSocket)                    |
+| Orchestration        | Docker Compose                                                 |
 | External data source | OpenSky Network API (OAuth2 client-credentials, Standard tier) |
 
 ## Repository Layout
@@ -72,25 +72,24 @@ Design rationale (dead-letter exchanges, why GraphQL over REST, why RabbitMQ dec
 
 1. Copy the root environment file and fill in your OpenSky credentials:
 
-   ```bash
-   cp .env.example .env
-   ```
+    ```bash
+    cp .env.example .env
+    ```
 
-   Edit `.env` and set `OPENSKY_CLIENT_ID` and `OPENSKY_CLIENT_SECRET`. Change the default RabbitMQ/MongoDB passwords before any non-local use.
+    Edit `.env` and set `OPENSKY_CLIENT_ID` and `OPENSKY_CLIENT_SECRET`. Change the default RabbitMQ/MongoDB passwords before any non-local use.
 
 2. Start everything:
 
-   ```bash
-   docker compose up --build
-   ```
+    ```bash
+    docker compose up --build
+    ```
 
-   This builds and starts RabbitMQ, MongoDB, `device-interface`, `api-gateway`, and `frontend`.
+    This builds and starts RabbitMQ, MongoDB, `device-interface`, `api-gateway`, and `frontend`.
 
 3. Open the app:
-
-   - Frontend: `http://localhost:${FRONTEND_PORT}` (default `8080`)
-   - GraphiQL (if `GRAPHIQL_ENABLED=true`): `http://localhost:${API_GATEWAY_PORT}/graphiql`
-   - RabbitMQ management UI: `http://localhost:${RABBITMQ_MANAGEMENT_PORT}` (default `15672`)
+    - Frontend: `http://localhost:${FRONTEND_PORT}` (default `8080`)
+    - GraphiQL (if `GRAPHIQL_ENABLED=true`): `http://localhost:${API_GATEWAY_PORT}/graphiql`
+    - RabbitMQ management UI: `http://localhost:${RABBITMQ_MANAGEMENT_PORT}` (default `15672`)
 
 Docker Compose reads configuration exclusively from the root `.env` file; the `environment:` blocks in `docker-compose.yml` interpolate those values and pass Docker-network hostnames (`rabbitmq`, `mongodb`) to each service.
 

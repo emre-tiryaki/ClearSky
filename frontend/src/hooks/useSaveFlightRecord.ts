@@ -31,5 +31,5 @@ export function useSaveFlightRecord() {
         }
     }, []);
 
-    return {save, saving, error};
+    return { save, saving, error };
 }

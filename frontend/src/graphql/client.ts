@@ -9,6 +9,6 @@ export function getGraphQlWsClient(): Client {
         const { graphqlWsUrl } = loadConfig();
         client = createClient({ url: graphqlWsUrl });
     }
-    
+
     return client;
 }

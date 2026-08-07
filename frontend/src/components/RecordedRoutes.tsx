@@ -37,13 +37,14 @@ export function RecordedRoutes({ records }: RecordedRoutesProps) {
                 if (recs.length < 2) return null;
 
                 const speeds = recs
-                    .map(r => r.velocity)
+                    .map((r) => r.velocity)
                     .filter((s): s is number => s != null);
                 const minSpeed = speeds.length ? Math.min(...speeds) : 0;
                 const maxSpeed = speeds.length ? Math.max(...speeds) : 0;
                 const range = maxSpeed - minSpeed;
 
-                const fallbackColor = ROUTE_COLORS[groupIdx % ROUTE_COLORS.length];
+                const fallbackColor =
+                    ROUTE_COLORS[groupIdx % ROUTE_COLORS.length];
 
                 return recs.slice(1).map((curr, i) => {
                     const prev = recs[i];
@@ -58,7 +59,8 @@ export function RecordedRoutes({ records }: RecordedRoutesProps) {
                                 [curr.latitude, curr.longitude],
                             ]}
                             pathOptions={{
-                                color: range > 0 ? speedToColor(t) : fallbackColor,
+                                color:
+                                    range > 0 ? speedToColor(t) : fallbackColor,
                                 weight: 3,
                                 opacity: 0.8,
                                 dashArray: "6 4",

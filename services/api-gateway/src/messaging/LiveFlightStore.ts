@@ -7,7 +7,7 @@ export class LiveFlightStore {
     set(position: FlightPosition): void {
         const history = this.flights.get(position.icao24) ?? [];
         history.push(position);
-        
+
         if (history.length > 3) {
             history.shift(); // Sadece güncel + 2 geçmiş (toplam 3) veriyi tut
         }

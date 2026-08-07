@@ -1,4 +1,4 @@
-import {Db, MongoClient} from "mongodb";
+import { Db, MongoClient } from "mongodb";
 
 // Manages a single MongoDB client connection and exposes the target database.
 export class MongoConnection {
@@ -8,7 +8,7 @@ export class MongoConnection {
     constructor(
         private readonly uri: string,
         private readonly dbName: string
-    ) {}
+    ) { }
 
     async connect(): Promise<Db> {
         this.client = new MongoClient(this.uri);

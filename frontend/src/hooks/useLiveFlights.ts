@@ -45,7 +45,7 @@ export function useLiveFlights(bbox: BoundingBox): {
             setTracked(prev => {
                 const next = new Map(prev);
                 const now = Date.now();
-                
+
                 const grouped = new Map<string, FlightPosition[]>();
                 for (const pos of batch) {
                     if (!grouped.has(pos.icao24)) grouped.set(pos.icao24, []);
@@ -55,7 +55,7 @@ export function useLiveFlights(bbox: BoundingBox): {
                 for (const [icao24, positions] of grouped) {
                     const latest = positions[positions.length - 1];
                     const existing = next.get(icao24);
-                    
+
                     const newTrailPoints = positions.map(p => ({
                         lat: p.latitude,
                         lon: p.longitude,

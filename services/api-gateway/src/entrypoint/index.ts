@@ -17,8 +17,8 @@ import { WatchStore } from "../messaging/WatchStore.js";
 async function main(): Promise<void> {
 	const config = loadConfig();
 	const app = Fastify();
-	
-	await app.register(cors, {origin: true});
+
+	await app.register(cors, { origin: true });
 
 	const mongoConnection = new MongoConnection(config.mongoUri, config.mongoDbName);
 	const db = await mongoConnection.connect();
@@ -27,7 +27,7 @@ async function main(): Promise<void> {
 
 	const liveFlightStore = new LiveFlightStore();
 	const watchStore = new WatchStore();
-	const resolvers	 = createResolvers({liveFlightStore, flightRepository, bookmarkRepository, watchStore});
+	const resolvers = createResolvers({ liveFlightStore, flightRepository, bookmarkRepository, watchStore });
 
 	await app.register(mercurius, {
 		schema: typeDefs,
@@ -64,7 +64,7 @@ async function main(): Promise<void> {
 	const statusMessageHandler = new SystemStatusMessageHandler(publisher);
 	await statusConsumerManager.consume(message => statusMessageHandler.handle(message));
 
-	await app.listen({port: config.port, host: "0.0.0.0"});
+	await app.listen({ port: config.port, host: "0.0.0.0" });
 
 	const shutdown = async (): Promise<void> => {
 		await app.close();
@@ -72,7 +72,7 @@ async function main(): Promise<void> {
 	}
 
 	process.on('SIGTERM', () => void shutdown());
-    process.on('SIGINT', () => void shutdown());
+	process.on('SIGINT', () => void shutdown());
 }
 
 main().catch(error => {

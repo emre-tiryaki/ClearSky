@@ -11,36 +11,59 @@ interface SaveFlightPanelProps {
 }
 
 // Floating panel that shows selected aircraft details and lets the user save it with an optional note.
-export function SaveFlightPanel({flight, saving, error, onSave, onClose, panelOffset = 0}: SaveFlightPanelProps) {
+export function SaveFlightPanel({
+    flight,
+    saving,
+    error,
+    onSave,
+    onClose,
+    panelOffset = 0,
+}: SaveFlightPanelProps) {
     const [note, setNote] = useState("");
 
     return (
-        <div className="absolute right-4 top-16 w-72 rounded-lg bg-white p-4 shadow-lg z-1000"
-            style={{right: `${panelOffset + 16}px`}}
+        <div
+            className="absolute right-4 top-16 w-72 rounded-lg bg-white p-4 shadow-lg z-1000"
+            style={{ right: `${panelOffset + 16}px` }}
         >
             <div className="flex items-center justify-between">
-                <h2 className="font-semibold">{flight.callsign?.trim() || flight.icao24}</h2>
-                <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+                <h2 className="font-semibold">
+                    {flight.callsign?.trim() || flight.icao24}
+                </h2>
+                <button
+                    onClick={onClose}
+                    className="text-slate-400 hover:text-slate-600"
+                >
                     ✕
                 </button>
             </div>
 
             <dl className="mt-2 text-sm text-slate-600">
                 <div>ICAO24 {flight.icao24}</div>
-                <div>Altitude: {flight.altitude != null ? `${Math.round(flight.altitude)} m`:"-"}</div>
-                <div>Speed: {flight.speed != null ? `${Math.round(flight.speed * 3.6)} km/h`:"-"}</div>
+                <div>
+                    Altitude:{" "}
+                    {flight.altitude != null
+                        ? `${Math.round(flight.altitude)} m`
+                        : "-"}
+                </div>
+                <div>
+                    Speed:{" "}
+                    {flight.speed != null
+                        ? `${Math.round(flight.speed * 3.6)} km/h`
+                        : "-"}
+                </div>
             </dl>
 
             <textarea
                 value={note}
-                onChange={e => setNote(e.target.value)}
+                onChange={(e) => setNote(e.target.value)}
                 placeholder="Description (Optional)"
                 className="mt-3 w-full rounded border border-slate-300 p-2 text-sm"
                 rows={2}
             />
-            
+
             {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-            
+
             <button
                 onClick={() => onSave(note)}
                 disabled={saving}
@@ -49,5 +72,5 @@ export function SaveFlightPanel({flight, saving, error, onSave, onClose, panelOf
                 {saving ? "Saving" : "Save"}
             </button>
         </div>
-    )
+    );
 }
