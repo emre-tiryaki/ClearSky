@@ -111,7 +111,7 @@ export function WatchedFlightsPanel({
                 className="absolute bg-white rounded-lg shadow-lg px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-all duration-200"
                 style={{
                     right: isFilterPanelOpen
-                        ? "calc(320px + 160px + 1.5rem + 0.5rem)"
+                        ? "calc(320px + 0.5rem)"
                         : "calc(160px + 1.5rem)",
                     top: "1rem",
                     zIndex: 1001,
