@@ -5,7 +5,7 @@ WORKDIR /app
 COPY services/api-gateway/package*.json ./services/api-gateway/
 
 WORKDIR /app/services/api-gateway
-RUN npm ci
+RUN npm install --no-audit --no-fund
 
 WORKDIR /app
 COPY shared ./shared
@@ -19,7 +19,7 @@ FROM node:22-alpine AS runtime
 WORKDIR /app/services/api-gateway
 
 COPY services/api-gateway/package*.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev --no-audit --no-fund
 
 COPY --from=build /app/services/api-gateway/dist ./dist
 

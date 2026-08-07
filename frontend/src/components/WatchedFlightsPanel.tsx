@@ -73,6 +73,7 @@ interface WatchedFlightsPanelProps {
     onMomentChange: (ms: number) => void;
     onApplyRange: () => void;
     onFlyToRecord: (record: FlightRecord) => void;
+    isFilterPanelOpen: boolean;
 }
 
 export function WatchedFlightsPanel({
@@ -90,6 +91,7 @@ export function WatchedFlightsPanel({
     onMomentChange,
     onApplyRange,
     onFlyToRecord,
+    isFilterPanelOpen,
 }: WatchedFlightsPanelProps) {
     const aircraft = useMemo(() => groupByAircraft(records), [records]);
 
@@ -106,10 +108,16 @@ export function WatchedFlightsPanel({
             {/* Toggle button — left of Search & Filter */}
             <button
                 onClick={onToggle}
-                className="absolute z-1000 bg-white rounded-lg shadow-lg px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
-                style={{ right: "calc(160px + 1.5rem)", top: "1rem" }}
+                className="absolute bg-white rounded-lg shadow-lg px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-all duration-200"
+                style={{
+                    right: isFilterPanelOpen
+                        ? "calc(320px + 160px + 1.5rem + 0.5rem)"
+                        : "calc(160px + 1.5rem)",
+                    top: "1rem",
+                    zIndex: 1001,
+                }}
             >
-                Tracked Flights
+                Saved Flights
                 {watchedIcao24s.size > 0 && (
                     <span className="bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                         {watchedIcao24s.size}
@@ -122,7 +130,7 @@ export function WatchedFlightsPanel({
                     {/* Header */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200">
                         <h2 className="font-semibold text-slate-800">
-                            Tracked Flights
+                            Saved Flights
                         </h2>
                         <button
                             onClick={onToggle}

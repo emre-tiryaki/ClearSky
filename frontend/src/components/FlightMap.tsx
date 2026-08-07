@@ -270,12 +270,16 @@ export function FlightMap({
         const minTime = Math.min(...times);
         const maxTime = Math.max(...times);
         if (minTime < maxTime) {
-            setRangeStartMs(minTime);
-            setRangeEndMs(maxTime);
-            setMomentMs((prev) =>
-                prev < minTime || prev > maxTime ? maxTime : prev,
-            );
+            const t = window.setTimeout(() => {
+                setRangeStartMs(minTime);
+                setRangeEndMs(maxTime);
+                setMomentMs((prev) =>
+                    prev < minTime || prev > maxTime ? maxTime : prev,
+                );
+            }, 0);
+            return () => void window.clearTimeout(t);
         }
+        return undefined;
     }, [records]);
 
     // In tracked mode (watch panel open), show recorded positions at current moment.
@@ -353,6 +357,7 @@ export function FlightMap({
                 onMomentChange={setMomentMs}
                 onApplyRange={handleApplyRange}
                 onFlyToRecord={handleFlyToRecord}
+                isFilterPanelOpen={isFilterPanelOpen}
             />
 
             <SearchFilterPanel
